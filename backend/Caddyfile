@@ -1,9 +1,10 @@
 dashboard-server.deldev.ovh:8443 {
   reverse_proxy backend:3000
-  tls delektowski@interia.pl
-  
-  # If you need to disable ALPN challenge, use this instead:
-  tls {
-    protocols tls1.2 tls1.3
+  tls delektowski@interia.pl {
+    # Use HTTP challenge instead of TLS-ALPN
+    issuer acme {
+      disable_tlsalpn_challenge
+      http_challenge_port 80
+    }
   }
 }
