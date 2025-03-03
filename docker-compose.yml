@@ -4,9 +4,8 @@ services:
     build:
       context: ./frontend
     volumes:
-      - ./frontend/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_frontend_data:/data
-      - caddy_frontend_config:/config
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./certbot/conf/:/etc/nginx/ssl/
     ports:
       - "80:80"
       - "443:443"
@@ -46,32 +45,33 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
 
-  caddy-backend:
-    image: caddy:latest
-    container_name: caddy-backend
+  nginx-backend:
+    image: nginx:alpine
+    container_name: nginx-backend
     ports:
-      - '8080:80'  # HTTP port
-      - '8443:443' # Add HTTPS port for certificate validation
+      - '8080:80'
+      - '8443:443'
     volumes:
-      - ./backend/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_backend_data:/data
-      - caddy_backend_config:/config
+      - ./backend/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./certbot/conf/:/etc/nginx/ssl/
     depends_on:
       - backend
     networks:
       - app-network
 
-volumes:
-  caddy_frontend_data:
-  caddy_frontend_config:
-  caddy_backend_data:
-  caddy_backend_config:
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf/:/etc/letsencrypt/
+      - ./certbot/www/:/var/www/certbot/
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email delektowski@interia.pl -d dashboard.deldev.ovh -d dashboard-server.deldev.ovh --agree-tos
 
 networks:
   app-network:
