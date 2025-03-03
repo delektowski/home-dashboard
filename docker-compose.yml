@@ -34,7 +34,7 @@ services:
     container_name: mongodb
     restart: always
     environment:
-      - MONGODB_DATABASE=home_dashboard
+      - MONGO_INITDB_DATABASE=home_dashboard
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
     ports:
