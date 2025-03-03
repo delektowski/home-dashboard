@@ -1,0 +1,23 @@
+
+.container {
+  position: relative;
+  inline-size: 100%;
+  padding-bottom: 5rem;
+
+}
+
+.p-menubar {
+  position: fixed;
+  inline-size: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+@media screen and (max-width: 900px) {
+  .p-menubar {
+    inline-size: 100%;
+  }
+}
+
+

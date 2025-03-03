@@ -1,0 +1,16 @@
+<div class="card">
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template #header>
+        <span class="header-place-name">{{title}}</span>
+      <div class="container__current-temp">
+      <p-badge styleClass="badge-width" value="{{currentTemperature}} &deg;C " badgeSize="xlarge" [severity]= severityValue() />
+      <p>Updated: {{createdAt | date:'H:mm:ss'}}</p>
+      </div>
+    </ng-template>
+    <ng-template #icons>
+      <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
+      <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
+    </ng-template>
+    <ng-content></ng-content>
+  </p-panel>
+</div>

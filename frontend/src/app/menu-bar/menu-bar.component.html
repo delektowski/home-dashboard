@@ -1,0 +1,11 @@
+<div class="container">
+  <p-menubar [model]="items" [autoHide]='true' [autoHideDelay]="100">
+
+    <ng-template #end>
+      <p-button severity="secondary" variant="outlined" icon="{{isDarkMode ? 'pi pi-sun' : 'pi pi-moon'}}"
+                (onClick)="toggleDarkMode()" />
+    </ng-template>
+  </p-menubar>
+
+
+</div>

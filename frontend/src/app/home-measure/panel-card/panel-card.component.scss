@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+
+  & .header-place-name {
+    margin-right: 2rem;
+  }
+}
+
+.badge-width {
+  width: 80px;
+}
+
+.container__current-temp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  & > p {
+    font-size: .8rem;
+  }
+}

@@ -1,0 +1,70 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_frontend_data:/data
+      - caddy_frontend_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - app-network
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    environment:
+      DATABASE_NAME: home_dashboard
+      DATABASE_USER: user
+      DATABASE_PASS: pass
+      DATABASE_URI: mongodb://user:pass@mongodb:27017/home_dashboard?authSource=admin
+    expose:
+      - '3000'
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGODB_DATABASE=home_dashboard
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    ports:
+      - 27017:27017
+    volumes:
+      - ./backend/data:/data/db
+    networks:
+      - app-network
+
+  caddy-backend:
+    image: caddy:latest
+    container_name: caddy-backend
+    ports:
+      - '8080:80'  # HTTP port
+      - '8443:443' # Add HTTPS port for certificate validation
+    volumes:
+      - ./backend/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_backend_data:/data
+      - caddy_backend_config:/config
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  caddy_frontend_data:
+  caddy_frontend_config:
+  caddy_backend_data:
+  caddy_backend_config:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,20 @@
+
+.card-style {
+  overflow: hidden;
+  width: 100vw;
+  display: inline-block;
+
+
+
+  @media (min-width: 1440px) {
+    width: 48vw; /* Full HD */
+  }
+
+  @media (min-width: 3840px) {
+    width: 32vw; /* 4K */
+  }
+
+  @media (max-width: 767px) {
+    width: 98vw; /* Mobile */
+  }
+}

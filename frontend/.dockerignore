@@ -1,0 +1,15 @@
+# .dockerignore
+
+# Ignore node_modules
+node_modules
+
+# Ignore build outputs
+dist
+build
+
+# Ignore environment files (secrets)
+*.env
+.env.*
+
+# Ignore local Angular cache
+.angular/cache
