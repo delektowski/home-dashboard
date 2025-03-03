@@ -1,11 +1,10 @@
 {
-  # Use HTTP challenge instead of TLS-ALPN
   acme_http {
     disable_tls_alpn_challenge
   }
 }
 
-dashboard-server.deldev.ovh:443 {
+dashboard-server.deldev.ovh:8443 {
   reverse_proxy backend:3000
   tls delektowski@interia.pl
 }
