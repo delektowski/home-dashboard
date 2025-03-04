@@ -15,6 +15,13 @@ services:
     networks:
       - app-network
     restart: on-failure
+    entrypoint: |
+      /bin/sh -c '
+      until [ -f /etc/letsencrypt/live/dashboard.deldev.ovh/fullchain.pem ] && [ -f /etc/letsencrypt/live/dashboard.deldev.ovh/privkey.pem ]; do
+        echo "Waiting for certificates to be generated..."
+        sleep 5
+      done
+      nginx -g "daemon off;"'
 
   backend:
     container_name: backend
@@ -67,8 +74,16 @@ services:
       - ./certbot/www/:/var/www/certbot/
     depends_on:
       - backend
+      - certbot
     networks:
       - app-network
+    entrypoint: |
+      /bin/sh -c '
+      until [ -f /etc/nginx/ssl/live/dashboard-server.deldev.ovh/fullchain.pem ] && [ -f /etc/nginx/ssl/live/dashboard-server.deldev.ovh/privkey.pem ]; do
+        echo "Waiting for certificates to be generated..."
+        sleep 5
+      done
+      nginx -g "daemon off;"'
 
   certbot:
     image: certbot/certbot
