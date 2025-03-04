@@ -10,18 +10,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - certbot
     networks:
       - app-network
-    restart: on-failure
-    entrypoint: |
-      /bin/sh -c '
-      until [ -f /etc/letsencrypt/live/dashboard.deldev.ovh/fullchain.pem ] && [ -f /etc/letsencrypt/live/dashboard.deldev.ovh/privkey.pem ]; do
-        echo "Waiting for certificates to be generated..."
-        sleep 5
-      done
-      nginx -g "daemon off;"'
+    restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   backend:
     container_name: backend
@@ -74,16 +66,10 @@ services:
       - ./certbot/www/:/var/www/certbot/
     depends_on:
       - backend
-      - certbot
     networks:
       - app-network
-    entrypoint: |
-      /bin/sh -c '
-      until [ -f /etc/nginx/ssl/live/dashboard-server.deldev.ovh/fullchain.pem ] && [ -f /etc/nginx/ssl/live/dashboard-server.deldev.ovh/privkey.pem ]; do
-        echo "Waiting for certificates to be generated..."
-        sleep 5
-      done
-      nginx -g "daemon off;"'
+    restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   certbot:
     image: certbot/certbot
@@ -91,7 +77,10 @@ services:
     volumes:
       - ./certbot/conf/:/etc/letsencrypt/
       - ./certbot/www/:/var/www/certbot/
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email delektowski@interia.pl -d dashboard.deldev.ovh -d dashboard-server.deldev.ovh --agree-tos
+    depends_on:
+      - frontend
+      - nginx-backend
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   app-network:
