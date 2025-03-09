@@ -3,7 +3,7 @@ services:
     container_name: frontend
     # Build the Docker image using the Dockerfile in the current directory
     build:
-      context: .
+      context: ./frontend
 
     # Map port 80 in the container to port 3000 on the host machine
     ports:

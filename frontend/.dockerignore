@@ -8,7 +8,7 @@ dist
 build
 
 # Ignore environment files (secrets)
-*.env
+../.env
 .env.*
 
 # Ignore local Angular cache
