@@ -17,8 +17,6 @@ services:
     # Load environment variables from the .env file
     env_file:
       - .env
-    environment:
-      - NODE_ENV=production
 
   backend:
     container_name: backend
