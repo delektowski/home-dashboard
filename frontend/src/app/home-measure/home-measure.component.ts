@@ -100,7 +100,7 @@ export class HomeMeasureComponent implements OnInit {
         this.updateCurrentHM(result, placeNameMeasureToChangeIndex);
       }
     } else {
-      if(this.currentHomeMeasuresCharts.length === 0 && result?.placeName) {
+      if(this.currentHomeMeasuresCharts.length === 0 && result?.placeName && result?.isForCurrentMeasure) {
          this.createCurrentHM(result);
       }
     }
