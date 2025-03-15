@@ -20,7 +20,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input() axisX: unknown[] = [];
   @Input() axisY: unknown[] = [];
   @Input() chartLineColor: ChartColorsEnum = ChartColorsEnum.BLUE;
-  @Input() placeName = '';
+  @Input() placeName: string | undefined;
   @Input() currentTemperature: number | undefined;
   @Input() currentHumidity: number | undefined;
   @Input() createdAt: string | undefined;
@@ -36,7 +36,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.placeNameChanged?.includes(this.placeName)) {
+    if (this.placeName && this.placeNameChanged?.includes(this.placeName)) {
       this.initChart();
       this.placeNameChanged.pop();
 

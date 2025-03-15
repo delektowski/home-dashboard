@@ -15,7 +15,7 @@ import {DatePipe} from '@angular/common';
 })
 export class PanelCardComponent implements OnChanges {
   @Input()
-  title = '';
+  title: string | undefined = 'unknown name';
   @Input()
   currentTemperature: number | undefined;
   @Input() createdAt: string | undefined;

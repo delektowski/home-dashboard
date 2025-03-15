@@ -1,11 +1,13 @@
 <div class="card">
   <p-panel [toggleable]="true" [collapsed]="true">
     <ng-template #header>
-        <span class="header-place-name">{{title}}</span>
+        <span class="header-place-name">{{title || ''}}</span>
+      @if (currentTemperature) {
       <div class="container__current-temp">
       <p-badge styleClass="badge-width" value="{{currentTemperature}} &deg;C " badgeSize="xlarge" [severity]= severityValue() />
       <p>Updated: {{createdAt | date:'H:mm:ss'}}</p>
       </div>
+      }
     </ng-template>
     <ng-content></ng-content>
   </p-panel>

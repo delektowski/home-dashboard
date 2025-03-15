@@ -3,5 +3,5 @@ export interface HomeMeasureModel {
   humidity?: number;
   placeName: string;
   temperature: number;
-  isForCurrentMeasure: boolean
+  isForCurrentMeasure?: boolean
 }

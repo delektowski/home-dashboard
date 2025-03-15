@@ -58,7 +58,7 @@ export class HomeMeasureComponent implements OnInit {
    */
   getCurrentHomeMeasures(): void {
     forkJoin(this.getCurrentHomeMeasuresByPlaceName()).pipe(take(1)).subscribe((currentMeasuresResults) => {
-      this.currentHomeMeasuresCharts = currentMeasuresResults;
+      this.currentHomeMeasuresCharts = currentMeasuresResults.filter((result) => result !== null);
     });
   }
 
@@ -83,7 +83,7 @@ export class HomeMeasureComponent implements OnInit {
    */
   subscribeHomeMeasures(): void {
     this.homeMeasuresService.subscribeMeasuresHome().pipe(map((result) => result?.data?.measuresHomeAdded)).subscribe((result) => {
-      this.updateCurrentHM(result);
+      this.handleCurrentHM(result);
       if(!result?.isForCurrentMeasure && result?.placeName) {
         this.placeNameChanged?.push(result?.placeName);
         this.updateHMCharts()
@@ -92,18 +92,36 @@ export class HomeMeasureComponent implements OnInit {
     });
   }
 
-  updateCurrentHM(result: HomeMeasureModel | undefined): void {
-    if (result?.placeName) {
+  handleCurrentHM(result: HomeMeasureModel | undefined): void {
+    if (this.currentHomeMeasuresCharts.length > 0 && result?.placeName) {
       let placeNameMeasureToChangeIndex = this.currentHomeMeasuresCharts.findIndex(measure => measure.placeName === result.placeName);
 
-      if (placeNameMeasureToChangeIndex !== -1 && result?.temperature) {
-        this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex] = {
-          ...this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex],
-          temperature: result.temperature,
-          createdAt: result.createdAt,
-        };
+      if (placeNameMeasureToChangeIndex !== -1 && result?.temperature && result?.createdAt) {
+        this.updateCurrentHM(result, placeNameMeasureToChangeIndex);
+      }
+    } else {
+      if(this.currentHomeMeasuresCharts.length === 0 && result?.placeName) {
+         this.createCurrentHM(result);
       }
     }
+  }
+
+  updateCurrentHM(result: HomeMeasureModel, placeNameMeasureToChangeIndex: number): void {
+    this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex] = {
+      ...this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex],
+      temperature: result.temperature,
+      createdAt: result.createdAt,
+    };
+  }
+
+
+  createCurrentHM(result: HomeMeasureModel): void {
+    const currentHomeMeasure: HomeMeasureModel = {
+      placeName: result.placeName,
+      temperature: result.temperature,
+      createdAt: result.createdAt,
+    }
+    this.currentHomeMeasuresCharts.push(currentHomeMeasure);
   }
 
   updateHMCharts(): void {
