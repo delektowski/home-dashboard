@@ -7,10 +7,6 @@
       <p>Updated: {{createdAt | date:'H:mm:ss'}}</p>
       </div>
     </ng-template>
-    <ng-template #icons>
-      <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
-      <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
-    </ng-template>
     <ng-content></ng-content>
   </p-panel>
 </div>

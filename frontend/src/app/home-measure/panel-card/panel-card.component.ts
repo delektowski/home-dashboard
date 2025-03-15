@@ -1,12 +1,11 @@
-import { Component, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
-import { PanelModule } from 'primeng/panel';
-import { AvatarModule } from 'primeng/avatar';
-import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { PrimeIcons } from 'primeng/api';
-import { Badge } from 'primeng/badge';
-import { SeverityEnum } from '../../models/severity.enum';
-import { DatePipe } from '@angular/common';
+import {Component, Input, OnChanges, signal, SimpleChanges} from '@angular/core';
+import {PanelModule} from 'primeng/panel';
+import {AvatarModule} from 'primeng/avatar';
+import {ButtonModule} from 'primeng/button';
+import {MenuModule} from 'primeng/menu';
+import {Badge} from 'primeng/badge';
+import {SeverityEnum} from '../../models/severity.enum';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-panel-card',
@@ -14,29 +13,18 @@ import { DatePipe } from '@angular/common';
   templateUrl: './panel-card.component.html',
   styleUrl: './panel-card.component.scss',
 })
-export class PanelCardComponent implements OnInit, OnChanges {
+export class PanelCardComponent implements OnChanges {
   @Input()
   title = '';
-
   @Input()
   currentTemperature: number | undefined;
   @Input() createdAt: string | undefined;
 
-  items: { label?: string; icon?: string; separator?: boolean }[] = [];
 
   protected severityValue = signal<SeverityEnum>(SeverityEnum.SECONDARY);
 
-  ngOnInit(): void {
-    this.items = [
-      {
-        label: 'Full Screen',
-        icon: PrimeIcons.ARROWS_H,
-      },
-    ];
 
-  }
-
-  ngOnChanges(changes:SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges): void {
     this.setBadgeColor(this.currentTemperature);
   }
 

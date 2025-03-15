@@ -10,8 +10,4 @@ export const routes: Routes = [{
   path: 'measures',
   component: HomeMeasureComponent,
   title: 'Home Measures',
-},{
-  path: 'koza',
-  component: MenuBarComponent,
-  title: 'Home Measures',
-},];
+}];

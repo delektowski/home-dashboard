@@ -18,11 +18,10 @@ export class HomeMeasureComponent implements OnInit {
   private homeMeasuresService = inject(HomeMeasuresService);
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
   currentHomeMeasuresCharts: HomeMeasureModel[] = [];
-  placeNames = [PlaceNameEnum.TEST1];
+  placeNames = [PlaceNameEnum.TEST1,];
   placeNameChanged: string[] = [];
 
   ngOnInit(): void {
-    console.log('KOZAAA');
     this.getHomeMeasures();
     this.getCurrentHomeMeasures();
     this.subscribeHomeMeasures();
