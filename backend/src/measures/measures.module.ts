@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MeasuresHomeController } from './measures-home/measures-home.controller';
 import { MeasuresHomeService } from './measures-home/services/measures-home.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -19,7 +18,6 @@ import {
       {name: CurrentMeasureHomeEntity.name, schema: CurrentMeasuresHomeSchema}
     ]),
   ],
-  controllers: [MeasuresHomeController],
   providers: [MeasuresHomeService, MeasuresHomeResolver],
 })
 export class MeasuresModule {}
