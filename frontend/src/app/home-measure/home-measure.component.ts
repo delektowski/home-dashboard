@@ -95,7 +95,6 @@ export class HomeMeasureComponent implements OnInit {
    */
   getCurrentHomeMeasuresByPlaceName(): Observable<HomeMeasureModel>[] {
     return this.placeNames.map((placeName) => {
-        console.log("placeName43", placeName)
         return this.homeMeasuresService.getCurrentHomeMeasure(placeName)
           .pipe(
             take(1),
