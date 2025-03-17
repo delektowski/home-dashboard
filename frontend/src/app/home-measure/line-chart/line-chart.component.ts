@@ -17,8 +17,8 @@ export class LineChartComponent implements OnInit, OnChanges {
   platformId = inject(PLATFORM_ID);
   private darkModeService = inject(DarkModeService);
 
-  @Input() axisX: unknown[] = [];
-  @Input() axisY: unknown[] = [];
+  @Input() axisX: unknown[] | undefined = [];
+  @Input() axisY: unknown[] | undefined = [];
   @Input() chartLineColor: ChartColorsEnum = ChartColorsEnum.BLUE;
   @Input() placeName: string | undefined;
   @Input() currentTemperature: number | undefined;

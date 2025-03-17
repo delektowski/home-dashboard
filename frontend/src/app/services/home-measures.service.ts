@@ -1,8 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ApolloQueryResult, FetchResult } from '@apollo/client';
-import { HomeMeasureModel } from '../models/home-measure.model';
+import {inject, Injectable} from '@angular/core';
+import {Apollo, gql} from 'apollo-angular';
+import {Observable} from 'rxjs';
+import {ApolloQueryResult, FetchResult} from '@apollo/client';
+import {HomeMeasureModel} from '../models/home-measure.model';
+import {MeasuresPlaceNames} from '../models/measures-place-names.model';
 
 
 const GET_MEASURES_HOME = gql`
@@ -16,6 +17,15 @@ const GET_MEASURES_HOME = gql`
     }
   }
 `;
+
+const GET_MEASURES_PLACE_NAMES = gql`
+  query getDistinctPlaceNames {
+    getDistinctPlaceNames {
+      placeNames
+    }
+  }
+`;
+
 const GET_CURRENT_MEASURE_HOME = gql`
   query getCurrentMeasureHome($placeName: String!) {
     getCurrentMeasureHome(placeName: $placeName) {
@@ -66,6 +76,14 @@ export class HomeMeasuresService {
         fetchPolicy: 'no-cache'
       })
       .valueChanges;
+  }
+
+  getMeasuresPlaceNames(): Observable<ApolloQueryResult<{ getDistinctPlaceNames: MeasuresPlaceNames }>> {
+    return this.apollo
+      .watchQuery<{ getDistinctPlaceNames: MeasuresPlaceNames }>({
+        query: GET_MEASURES_PLACE_NAMES,
+        fetchPolicy: 'no-cache'
+      }).valueChanges;
   }
 
   subscribeMeasuresHome(): Observable<FetchResult<{ measuresHomeAdded: HomeMeasureModel }>> {

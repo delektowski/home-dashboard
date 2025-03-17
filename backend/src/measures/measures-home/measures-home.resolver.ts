@@ -3,6 +3,7 @@ import { MeasuresHomeService } from './services/measures-home.service';
 import { MeasuresHomeModel } from './models/measures-home.model';
 import { MeasuresHomeInput } from './models/measures-home-input.model';
 import { PubSub } from 'graphql-subscriptions';
+import {MeasuresPlaceNamesModel} from "./models/measures-place-names.model";
 
 const pubSub = new PubSub();
 
@@ -39,6 +40,20 @@ export class MeasuresHomeResolver {
   ) {
     return this.measuresHomeService.getCurrentMeasureHome(placeName);
   }
+
+  @Query(() => MeasuresPlaceNamesModel, {
+    name: 'getDistinctPlaceNames',
+    description: 'Provides a list of distinct place names',
+    nullable: true,
+  })
+  async getDistinctPlaceNames() {
+    const placeNames = await this.measuresHomeService.getDistinctPlaceNames();
+    return {
+      placeNames: placeNames || []
+    };
+  }
+
+
 
   @Mutation(() => MeasuresHomeModel)
   async createMeasuresHome(

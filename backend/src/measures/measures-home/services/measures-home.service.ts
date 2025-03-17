@@ -27,6 +27,10 @@ export class MeasuresHomeService {
     return this.measuresHomeModel.find({ placeName }).exec();
   }
 
+  async getDistinctPlaceNames(): Promise<string[]> {
+    return this.measuresHomeModel.distinct('placeName').exec();
+  }
+
   async getCurrentMeasureHome(
     placeName: string,
   ): Promise<CurrentMeasureHomeEntity | null> {
@@ -36,13 +40,15 @@ export class MeasuresHomeService {
   async updateCurrentMeasureHome(
     measuresHomeDto: MeasuresHomeDto,
   ): Promise<CurrentMeasureHomeEntity> {
-    return this.currentMeasureHomeModel.findOneAndUpdate(
-      { placeName: measuresHomeDto.placeName },
-      measuresHomeDto,
-      {
-        upsert: true,
-        new: true,
-      },
-    ).exec();
+    return this.currentMeasureHomeModel
+      .findOneAndUpdate(
+        { placeName: measuresHomeDto.placeName },
+        measuresHomeDto,
+        {
+          upsert: true,
+          new: true,
+        },
+      )
+      .exec();
   }
 }

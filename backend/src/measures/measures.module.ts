@@ -11,11 +11,15 @@ import {
   CurrentMeasuresHomeSchema,
 } from './measures-home/schemas/current-measure-home.schema';
 
+
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: MeasuresHomeEntity.name, schema: MeasuresHomeSchema },
-      {name: CurrentMeasureHomeEntity.name, schema: CurrentMeasuresHomeSchema}
+      {
+        name: CurrentMeasureHomeEntity.name,
+        schema: CurrentMeasuresHomeSchema,
+      }
     ]),
   ],
   providers: [MeasuresHomeService, MeasuresHomeResolver],

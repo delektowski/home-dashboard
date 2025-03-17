@@ -1,11 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { forkJoin, map, Observable, take } from 'rxjs';
-import { HomeMeasuresService } from '../services/home-measures.service';
-import { ChartModule } from 'primeng/chart';
-import { LineChartComponent } from './line-chart/line-chart.component';
-import { HomeMeasureModel } from '../models/home-measure.model';
-import { HomeMeasureChartModel } from '../models/home-measure-chart.model';
-import { PlaceNameEnum } from '../models/place-name.enum';
+import {Component, inject, OnInit} from '@angular/core';
+import {forkJoin, map, Observable, switchMap, take, tap} from 'rxjs';
+import {HomeMeasuresService} from '../services/home-measures.service';
+import {ChartModule} from 'primeng/chart';
+import {LineChartComponent} from './line-chart/line-chart.component';
+import {HomeMeasureModel} from '../models/home-measure.model';
+import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 
 
 @Component({
@@ -17,14 +16,42 @@ import { PlaceNameEnum } from '../models/place-name.enum';
 export class HomeMeasureComponent implements OnInit {
   private homeMeasuresService = inject(HomeMeasuresService);
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
-  currentHomeMeasuresCharts: HomeMeasureModel[] = [];
-  placeNames = [PlaceNameEnum.TEST1,];
+  currentHomeMeasuresCharts: HomeMeasureModel[] = []
+  placeNames: string[] = [];
   placeNameChanged: string[] = [];
 
   ngOnInit(): void {
-    this.getHomeMeasures();
-    this.getCurrentHomeMeasures();
+    this.fetchPlaceNamesAndData();
     this.subscribeHomeMeasures();
+  }
+
+  fetchPlaceNamesAndData(): void {
+    this.homeMeasuresService.getMeasuresPlaceNames().pipe(
+      take(1),
+      map(result => result.data.getDistinctPlaceNames.placeNames),
+      tap(placeNames => {
+        this.placeNames = placeNames;
+      }),
+      switchMap(placeNames => {
+        const homeMeasuresObservable = forkJoin(this.getHomeMeasuresByPlaceName());
+        const currentHomeMeasuresObservable = forkJoin(this.getCurrentHomeMeasuresByPlaceName());
+
+        return forkJoin({
+          homeMeasures: homeMeasuresObservable,
+          currentHomeMeasures: currentHomeMeasuresObservable
+        });
+      })
+    ).subscribe(results => {
+      this.homeMeasuresCharts = results.homeMeasures.map(result => {
+        return this.handleLabelsValuesSeparation(result);
+      });
+
+
+
+      this.currentHomeMeasuresCharts = results.currentHomeMeasures.filter(result => result !== null);
+      console.log("currentHomeMeasuresCharts", this.currentHomeMeasuresCharts)
+      console.log("homeMeasuresChart", this.homeMeasuresCharts)
+    });
   }
 
   /**
@@ -53,15 +80,6 @@ export class HomeMeasureComponent implements OnInit {
     );
   }
 
-  /**
-   * Fetches current home measures data from the service.
-   */
-  getCurrentHomeMeasures(): void {
-    forkJoin(this.getCurrentHomeMeasuresByPlaceName()).pipe(take(1)).subscribe((currentMeasuresResults) => {
-      this.currentHomeMeasuresCharts = currentMeasuresResults.filter((result) => result !== null);
-    });
-  }
-
 
   /**
    * Fetches current home measures data for each place name.
@@ -69,12 +87,14 @@ export class HomeMeasureComponent implements OnInit {
    * @returns {Observable<HomeMeasureModel>[]} An array of observables, each fetching the current home measure for a specific place name.
    */
   getCurrentHomeMeasuresByPlaceName(): Observable<HomeMeasureModel>[] {
-    return this.placeNames.map((placeName) =>
-      this.homeMeasuresService.getCurrentHomeMeasure(placeName)
-        .pipe(
-          take(1),
-          map(result => result.data.getCurrentMeasureHome),
-        ),
+    return this.placeNames.map((placeName) => {
+        console.log("placeName43", placeName)
+        return this.homeMeasuresService.getCurrentHomeMeasure(placeName)
+          .pipe(
+            take(1),
+            map(result => result.data.getCurrentMeasureHome),
+          )
+      }
     );
   }
 
@@ -84,7 +104,7 @@ export class HomeMeasureComponent implements OnInit {
   subscribeHomeMeasures(): void {
     this.homeMeasuresService.subscribeMeasuresHome().pipe(map((result) => result?.data?.measuresHomeAdded)).subscribe((result) => {
       this.handleCurrentHM(result);
-      if(!result?.isForCurrentMeasure && result?.placeName) {
+      if (!result?.isForCurrentMeasure && result?.placeName) {
         this.placeNameChanged?.push(result?.placeName);
         this.updateHMCharts()
       }
@@ -100,8 +120,8 @@ export class HomeMeasureComponent implements OnInit {
         this.updateCurrentHM(result, placeNameMeasureToChangeIndex);
       }
     } else {
-      if(this.currentHomeMeasuresCharts.length === 0 && result?.placeName && result?.isForCurrentMeasure) {
-         this.createCurrentHM(result);
+      if (this.currentHomeMeasuresCharts.length === 0 && result?.placeName && result?.isForCurrentMeasure) {
+        this.createCurrentHM(result);
       }
     }
   }
@@ -143,7 +163,7 @@ export class HomeMeasureComponent implements OnInit {
       acc.labels.push(this.splitLabelTwoLines(current.createdAt));
       acc.values.push(current.temperature);
       return acc;
-    }, { labels: [], values: [], placeName: '' });
+    }, {labels: [], values: [], placeName: ''});
   }
 
   /**
@@ -154,8 +174,8 @@ export class HomeMeasureComponent implements OnInit {
    */
   splitLabelTwoLines(createdAt: string): string[] {
     const date = new Date(createdAt);
-    const hoursMinutes = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dayMonth = date.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+    const hoursMinutes = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    const dayMonth = date.toLocaleDateString([], {day: '2-digit', month: '2-digit'});
     return [hoursMinutes, dayMonth];
   }
 }
