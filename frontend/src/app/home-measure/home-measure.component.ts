@@ -16,7 +16,7 @@ import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 export class HomeMeasureComponent implements OnInit {
   private homeMeasuresService = inject(HomeMeasuresService);
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
-  currentHomeMeasuresCharts: HomeMeasureModel[] = []
+  currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
   placeNames: string[] = [];
   placeNameChanged: string[] = [];
 
@@ -47,10 +47,10 @@ export class HomeMeasureComponent implements OnInit {
       });
 
 
+      results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
+        this.currentHomeMeasuresCharts.set(result.placeName, result);
+      });
 
-      this.currentHomeMeasuresCharts = results.currentHomeMeasures.filter(result => result !== null);
-      console.log("currentHomeMeasuresCharts", this.currentHomeMeasuresCharts)
-      console.log("homeMeasuresChart", this.homeMeasuresCharts)
     });
   }
 
@@ -106,47 +106,26 @@ export class HomeMeasureComponent implements OnInit {
       this.handleCurrentHM(result);
       if (!result?.isForCurrentMeasure && result?.placeName) {
         this.placeNameChanged?.push(result?.placeName);
-        this.updateHMCharts()
+        this.getHomeMeasures();
       }
 
     });
   }
 
   handleCurrentHM(result: HomeMeasureModel | undefined): void {
-    if (this.currentHomeMeasuresCharts.length > 0 && result?.placeName) {
-      let placeNameMeasureToChangeIndex = this.currentHomeMeasuresCharts.findIndex(measure => measure.placeName === result.placeName);
+    if (!result?.placeName) return;
 
-      if (placeNameMeasureToChangeIndex !== -1 && result?.temperature && result?.createdAt) {
-        this.updateCurrentHM(result, placeNameMeasureToChangeIndex);
-      }
-    } else {
-      if (this.currentHomeMeasuresCharts.length === 0 && result?.placeName && result?.isForCurrentMeasure) {
-        this.createCurrentHM(result);
-      }
+    if (result.isForCurrentMeasure) {
+      // Simply update or add to the Map
+      this.currentHomeMeasuresCharts.set(result.placeName, {
+        placeName: result.placeName,
+        temperature: result.temperature,
+        createdAt: result.createdAt,
+      });
+    } else if (result.placeName) {
+      this.placeNameChanged?.push(result.placeName);
+      this.getHomeMeasures();
     }
-  }
-
-  updateCurrentHM(result: HomeMeasureModel, placeNameMeasureToChangeIndex: number): void {
-    this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex] = {
-      ...this.currentHomeMeasuresCharts[placeNameMeasureToChangeIndex],
-      temperature: result.temperature,
-      createdAt: result.createdAt,
-    };
-  }
-
-
-  createCurrentHM(result: HomeMeasureModel): void {
-    const currentHomeMeasure: HomeMeasureModel = {
-      placeName: result.placeName,
-      temperature: result.temperature,
-      createdAt: result.createdAt,
-    }
-    this.currentHomeMeasuresCharts.push(currentHomeMeasure);
-  }
-
-  updateHMCharts(): void {
-    this.getHomeMeasures();
-
   }
 
   /**
