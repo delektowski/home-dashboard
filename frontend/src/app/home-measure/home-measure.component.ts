@@ -25,6 +25,13 @@ export class HomeMeasureComponent implements OnInit {
     this.subscribeHomeMeasures();
   }
 
+  /**
+   * Fetches place names and their corresponding home measures data.
+   *
+   * This method first retrieves distinct place names, then uses those names to fetch
+   * both home measures and current home measures data. The results are processed and
+   * stored in the respective class properties.
+   */
   fetchPlaceNamesAndData(): void {
     this.homeMeasuresService.getMeasuresPlaceNames().pipe(
       take(1),
@@ -112,11 +119,15 @@ export class HomeMeasureComponent implements OnInit {
     });
   }
 
+  /**
+   * Handles the current home measure result.
+   *
+   * @param {HomeMeasureModel | undefined} result - The home measure result to handle.
+   */
   handleCurrentHM(result: HomeMeasureModel | undefined): void {
     if (!result?.placeName) return;
 
     if (result.isForCurrentMeasure) {
-      // Simply update or add to the Map
       this.currentHomeMeasuresCharts.set(result.placeName, {
         placeName: result.placeName,
         temperature: result.temperature,
