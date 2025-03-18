@@ -1,4 +1,4 @@
-dashboard.deldev.ovh {
+{$DOMAIN_NAME} {
     root * ./www
     encode gzip
 
@@ -13,5 +13,5 @@ dashboard.deldev.ovh {
         file_server
     }
 
-    tls delektowski@interia.pl
+    tls {$EMAIL_ADDRESS}
 }

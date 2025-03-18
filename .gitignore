@@ -38,8 +38,11 @@ testem.log
 /typings
 data/
 certbot/
+.env
+/mongodb_data/
 
 # System files
 .DS_Store
 Thumbs.db
+
 

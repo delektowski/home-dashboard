@@ -23,10 +23,10 @@ services:
       dockerfile: Dockerfile.dev
     command: npm run start:dev
     environment:
-      DATABASE_NAME: home_dashboard
-      DATABASE_USER: user
-      DATABASE_PASS: pass
-      DATABASE_URI: mongodb://user:pass@mongodb:27017/home_dashboard?authSource=admin
+      DATABASE_NAME: ${MONGODB_DATABASE}
+      DATABASE_USER: ${MONGODB_USER}
+      DATABASE_PASS: ${MONGODB_PASSWORD}
+      DATABASE_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=admin
       NODE_ENV: development
     expose:
       - '3000'
@@ -45,13 +45,13 @@ services:
     container_name: mongodb
     restart: always
     environment:
-      - MONGODB_DATABASE=home_dashboard
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - ./mongodb_data:/data/db
     networks:
       - app-network
 
