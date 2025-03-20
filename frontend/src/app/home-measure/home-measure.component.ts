@@ -1,10 +1,13 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {forkJoin, map, Observable, switchMap, take, tap} from 'rxjs';
+import {Component, inject, OnInit, DestroyRef} from '@angular/core';
+import {filter, forkJoin, fromEvent, map, Observable, switchMap, take, tap} from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {HomeMeasuresService} from '../services/home-measures.service';
 import {ChartModule} from 'primeng/chart';
 import {LineChartComponent} from './line-chart/line-chart.component';
 import {HomeMeasureModel} from '../models/home-measure.model';
 import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
+import {LabelsService} from '../services/labels.service';
+
 
 
 @Component({
@@ -14,15 +17,20 @@ import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
   styleUrl: './home-measure.component.scss',
 })
 export class HomeMeasureComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private homeMeasuresService = inject(HomeMeasuresService);
+  private labelsService = inject(LabelsService);
+
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
   currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
   placeNames: string[] = [];
   placeNameChanged: string[] = [];
+  protected visible: string = '';
 
   ngOnInit(): void {
     this.fetchPlaceNamesAndData();
     this.subscribeHomeMeasures();
+    this.handleVisibilityChange();
   }
 
   /**
@@ -40,7 +48,7 @@ export class HomeMeasureComponent implements OnInit {
         this.placeNames = placeNames;
       }),
       switchMap(placeNames => {
-        const homeMeasuresObservable = forkJoin(this.getHomeMeasuresByPlaceName());
+        const homeMeasuresObservable = forkJoin(this.getCurrentDayHomeMeasuresByPlaceName());
         const currentHomeMeasuresObservable = forkJoin(this.getCurrentHomeMeasuresByPlaceName());
 
         return forkJoin({
@@ -50,7 +58,7 @@ export class HomeMeasureComponent implements OnInit {
       })
     ).subscribe(results => {
       this.homeMeasuresCharts = results.homeMeasures.map(result => {
-        return this.handleLabelsValuesSeparation(result);
+        return this.labelsService.handleLabelsValuesSeparation(result);
       });
 
 
@@ -65,9 +73,9 @@ export class HomeMeasureComponent implements OnInit {
    * Fetches home measures data from the service.
    */
   getHomeMeasures(): void {
-    forkJoin(this.getHomeMeasuresByPlaceName()).pipe(take(1)).subscribe((homeMeasuresResults) => {
+    forkJoin(this.getCurrentDayHomeMeasuresByPlaceName()).pipe(take(1)).subscribe((homeMeasuresResults) => {
       this.homeMeasuresCharts = homeMeasuresResults.map((result) => {
-        return this.handleLabelsValuesSeparation(result);
+        return this.labelsService.handleLabelsValuesSeparation(result);
       });
     });
   }
@@ -77,12 +85,12 @@ export class HomeMeasureComponent implements OnInit {
    *
    * @returns {Observable<HomeMeasureModel[]>[]} An array of observables, each fetching the home measures for a specific place name.
    */
-  getHomeMeasuresByPlaceName(): Observable<HomeMeasureModel[]>[] {
+  getCurrentDayHomeMeasuresByPlaceName(): Observable<HomeMeasureModel[]>[] {
     return this.placeNames.map((placeName) =>
-      this.homeMeasuresService.getHomeMeasures(placeName)
+      this.homeMeasuresService.getCurrentDayMeasuresHome(placeName)
         .pipe(
           take(1),
-          map(result => result.data.getMeasuresHome),
+          map(result => result.data.getCurrentDayMeasuresHome),
         ),
     );
   }
@@ -103,6 +111,7 @@ export class HomeMeasureComponent implements OnInit {
       }
     );
   }
+
 
   /**
    * Subscribes to home measures updates from the service.
@@ -138,33 +147,16 @@ export class HomeMeasureComponent implements OnInit {
     }
   }
 
-  /**
-   * Separates labels and values from the home measure results.
-   *
-   * @param {HomeMeasureModel[]} result - The array of home measure results.
-   * @returns {HomeMeasureChartModel} The home measure chart model with separated labels and values.
-   */
-  handleLabelsValuesSeparation(result: HomeMeasureModel[]): HomeMeasureChartModel {
-    return result.reduce((acc: HomeMeasureChartModel, current) => {
-      if (!acc.placeName) {
-        acc.placeName = current.placeName;
-      }
-      acc.labels.push(this.splitLabelTwoLines(current.createdAt));
-      acc.values.push(current.temperature);
-      return acc;
-    }, {labels: [], values: [], placeName: ''});
+
+  handleVisibilityChange(): void {
+    fromEvent(document, 'visibilitychange').pipe(
+      takeUntilDestroyed(this.destroyRef),
+      filter(() => !document.hidden),
+      map(() => undefined)
+    ).subscribe(() => {
+      this.fetchPlaceNamesAndData();
+    });
   }
 
-  /**
-   * Splits the given date string into two lines: time and date.
-   *
-   * @param {string} createdAt - The date string to be split.
-   * @returns {string[]} An array containing the time and date as separate strings.
-   */
-  splitLabelTwoLines(createdAt: string): string[] {
-    const date = new Date(createdAt);
-    const hoursMinutes = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-    const dayMonth = date.toLocaleDateString([], {day: '2-digit', month: '2-digit'});
-    return [hoursMinutes, dayMonth];
-  }
+
 }

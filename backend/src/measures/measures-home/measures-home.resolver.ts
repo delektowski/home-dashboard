@@ -12,18 +12,18 @@ export class MeasuresHomeResolver {
   constructor(private readonly measuresHomeService: MeasuresHomeService) {}
 
   @Query(() => [MeasuresHomeModel], {
-    name: 'getMeasuresHome',
+    name: 'getCurrentDayMeasuresHome',
     description: 'Provides a measures data according to the place name',
     nullable: true,
   })
-  async getMeasuresHome(
+  async getCurrentDayMeasuresHome(
     @Args('placeName', {
       description: 'Place name where measure device is',
       nullable: false,
     })
     placeName: string,
   ) {
-    return this.measuresHomeService.getMeasuresHome(placeName);
+    return this.measuresHomeService.getCurrentDayMeasuresHome(placeName);
   }
 
   @Query(() => MeasuresHomeModel, {

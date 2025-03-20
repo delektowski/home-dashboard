@@ -21,10 +21,21 @@ export class MeasuresHomeService {
     return createMeasuresHome.save();
   }
 
-  async getMeasuresHome(
+  async getCurrentDayMeasuresHome(
     placeName: string,
   ): Promise<MeasuresHomeEntity[] | null> {
-    return this.measuresHomeModel.find({ placeName }).exec();
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    // Current time (now)
+    const now = new Date()
+    return this.measuresHomeModel.find({
+      placeName,
+      createdAt: {
+        $gte: startOfToday,
+        $lte: now
+      }
+    }).exec();
   }
 
   async getDistinctPlaceNames(): Promise<string[]> {

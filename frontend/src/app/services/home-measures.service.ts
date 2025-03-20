@@ -6,9 +6,9 @@ import {HomeMeasureModel} from '../models/home-measure.model';
 import {MeasuresPlaceNames} from '../models/measures-place-names.model';
 
 
-const GET_MEASURES_HOME = gql`
-  query getMeasuresHome($placeName: String!) {
-    getMeasuresHome(placeName: $placeName) {
+const GET_CURRENT_DAY_MEASURES_HOME = gql`
+  query getCurrentDayMeasuresHome($placeName: String!) {
+    getCurrentDayMeasuresHome(placeName: $placeName) {
       id
       placeName
       temperature
@@ -53,10 +53,10 @@ const MEASURES_HOME_SUBSCRIPTION = gql`
 export class HomeMeasuresService {
   private apollo = inject(Apollo);
 
-  getHomeMeasures(placeName: string): Observable<ApolloQueryResult<{ getMeasuresHome: HomeMeasureModel[] }>> {
+  getCurrentDayMeasuresHome(placeName: string): Observable<ApolloQueryResult<{ getCurrentDayMeasuresHome: HomeMeasureModel[] }>> {
     return this.apollo
-      .watchQuery<{ getMeasuresHome: HomeMeasureModel[] }>({
-        query: GET_MEASURES_HOME,
+      .watchQuery<{ getCurrentDayMeasuresHome: HomeMeasureModel[] }>({
+        query: GET_CURRENT_DAY_MEASURES_HOME,
         variables: {
           placeName,
         },
