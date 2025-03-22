@@ -87,10 +87,10 @@ export class HomeMeasureComponent implements OnInit {
    */
   getCurrentDayHomeMeasuresByPlaceName(): Observable<HomeMeasureModel[]>[] {
     return this.placeNames.map((placeName) =>
-      this.homeMeasuresService.getCurrentDayMeasuresHome(placeName)
+      this.homeMeasuresService.getMeasuresHome(placeName)
         .pipe(
           take(1),
-          map(result => result.data.getCurrentDayMeasuresHome),
+          map(result => result.data.getMeasuresHome),
         ),
     );
   }
