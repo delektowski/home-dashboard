@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -7,6 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
+import { provideServiceWorker } from '@angular/service-worker';
 
 
 const MyPreset = definePreset(Aura, {
@@ -37,7 +38,10 @@ export const appConfig: ApplicationConfig = {
         }
       },
     }), provideRouter(routes),
-    provideHttpClient(), ...graphqlProvider,
+    provideHttpClient(), ...graphqlProvider, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 
 };
