@@ -2,7 +2,7 @@
 .container {
   position: relative;
   inline-size: 100%;
-  padding-bottom: 2rem;
+  padding-bottom: 5rem;
 
 }
 
@@ -17,6 +17,10 @@
 @media screen and (max-width: 900px) {
   .p-menubar {
     inline-size: 100%;
+  }
+
+  .container {
+    padding-bottom: 2rem;
   }
 }
 
