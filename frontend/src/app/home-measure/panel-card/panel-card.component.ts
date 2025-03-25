@@ -21,7 +21,7 @@ export class PanelCardComponent implements OnChanges {
   @Input() createdAt: string | undefined;
 
 
-  protected severityValue = signal<SeverityEnum>(SeverityEnum.SECONDARY);
+  protected severityValue: any = signal<SeverityEnum>(SeverityEnum.SECONDARY);
 
 
   ngOnChanges(changes: SimpleChanges): void {
