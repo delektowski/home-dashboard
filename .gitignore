@@ -46,3 +46,4 @@ certbot/
 Thumbs.db
 
 
+/pico-home-dashboard/env.py

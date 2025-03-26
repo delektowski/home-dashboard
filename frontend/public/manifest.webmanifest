@@ -1,8 +1,8 @@
 {
   "name": "home-dashboard-client",
   "short_name": "home-dashboard-client",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "theme_color": "#18181b",
+  "background_color": "#18181b",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
