@@ -1,18 +1,18 @@
-<div class="card">
-  <p-panel [toggleable]="true" [collapsed]="true">
-    <ng-template #header>
 
-
+  <div class="card" [ngClass]="{'hide-uninitialized': !isInitialized}">
+    <p-panel [toggleable]="true" [collapsed]="true" (onBeforeToggle)="onCollapsedChange($event)">
+      <ng-template #header>
         <span class="header-place-name">{{ title || '' }}</span>
         @if (currentTemperature) {
           <div class="container__current-temp">
             <p-badge styleClass="badge-width" value="{{currentTemperature}} &deg;C " badgeSize="xlarge"
                      [severity]=severityValue()/>
-              <p>updated: {{ createdAt | date:'H:mm' }}</p>
+              <p>{{ createdAt | date:'H:mm' }}</p>
           </div>
         }
+      </ng-template>
+      <ng-content></ng-content>
+    </p-panel>
+  </div>
 
-    </ng-template>
-    <ng-content></ng-content>
-  </p-panel>
-</div>
+

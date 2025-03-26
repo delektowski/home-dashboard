@@ -1,6 +1,6 @@
 {
   "name": "home-dashboard-client",
-  "short_name": "home-dashboard-client",
+  "short_name": "Domek",
   "theme_color": "#18181b",
   "background_color": "#18181b",
   "display": "standalone",

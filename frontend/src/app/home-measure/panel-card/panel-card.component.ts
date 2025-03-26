@@ -1,19 +1,19 @@
-import {Component, Input, OnChanges, signal, SimpleChanges, WritableSignal} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, signal, SimpleChanges, WritableSignal} from '@angular/core';
 import {PanelModule} from 'primeng/panel';
 import {AvatarModule} from 'primeng/avatar';
 import {ButtonModule} from 'primeng/button';
 import {MenuModule} from 'primeng/menu';
 import {Badge} from 'primeng/badge';
 import {Severity} from '../../models/severity';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-panel-card',
-  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe],
+  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe, NgClass],
   templateUrl: './panel-card.component.html',
   styleUrl: './panel-card.component.scss',
 })
-export class PanelCardComponent implements OnChanges {
+export class PanelCardComponent implements OnChanges, AfterViewInit {
   @Input()
   title: string | undefined = 'unknown name';
   @Input()
@@ -23,9 +23,20 @@ export class PanelCardComponent implements OnChanges {
 
   protected severityValue: WritableSignal<Severity> = signal<Severity>("secondary");
 
+  isInitialized = false;
+
 
   ngOnChanges(changes: SimpleChanges): void {
     this.setBadgeColor(this.currentTemperature);
+  }
+
+  /**
+   * Is needed in order to hide the panel for a moment once it is extended for a while
+   */
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.isInitialized = true;
+    },80);
   }
 
   setBadgeColor(temperature: number | undefined) {
@@ -51,5 +62,9 @@ export class PanelCardComponent implements OnChanges {
       }
     }
 
+  }
+
+  onCollapsedChange($event: any) {
+    console.log("$event", $event)
   }
 }
