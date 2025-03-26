@@ -1,10 +1,10 @@
-import {Component, Input, OnChanges, signal, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, signal, SimpleChanges, WritableSignal} from '@angular/core';
 import {PanelModule} from 'primeng/panel';
 import {AvatarModule} from 'primeng/avatar';
 import {ButtonModule} from 'primeng/button';
 import {MenuModule} from 'primeng/menu';
 import {Badge} from 'primeng/badge';
-import {SeverityEnum} from '../../models/severity.enum';
+import {Severity} from '../../models/severity';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -21,7 +21,7 @@ export class PanelCardComponent implements OnChanges {
   @Input() createdAt: string | undefined;
 
 
-  protected severityValue = signal<SeverityEnum>(SeverityEnum.SECONDARY);
+  protected severityValue: WritableSignal<Severity> = signal<Severity>("secondary");
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -31,23 +31,23 @@ export class PanelCardComponent implements OnChanges {
   setBadgeColor(temperature: number | undefined) {
     if (temperature) {
       if (temperature <= 1) {
-        this.severityValue.set(SeverityEnum.SECONDARY);
+        this.severityValue.set("secondary");
       }
       if (temperature > 1 &&
         temperature < 18) {
-        this.severityValue.set(SeverityEnum.CONTRAST);
+        this.severityValue.set("contrast");
       }
       if (temperature >= 18 && temperature < 20) {
-        this.severityValue.set(SeverityEnum.INFO);
+        this.severityValue.set("info");
       }
       if (temperature > 20 && temperature < 22) {
-        this.severityValue.set(SeverityEnum.PRIMARY);
+        this.severityValue.set("success");
       }
-      if (temperature >= 22 && temperature < 22) {
-        this.severityValue.set(SeverityEnum.WARN);
+      if (temperature >= 22 && temperature < 24) {
+        this.severityValue.set("warn");
       }
-      if (temperature > 22) {
-        this.severityValue.set(SeverityEnum.DANGER);
+      if (temperature > 24) {
+        this.severityValue.set("danger");
       }
     }
 
