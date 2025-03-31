@@ -53,7 +53,7 @@ const MEASURES_HOME_SUBSCRIPTION = gql`
 export class HomeMeasuresService {
   private apollo = inject(Apollo);
 
-  isDebugInfo = false
+  isSpinner = false
 
   getMeasuresHome(placeName: string): Observable<ApolloQueryResult<{ getMeasuresHome: HomeMeasureModel[] }>> {
     return this.apollo
@@ -94,11 +94,8 @@ export class HomeMeasuresService {
     });
   }
 
-  debugPWA() {
-    this.isDebugInfo = true;
-    setTimeout(() => {
-      this.isDebugInfo = false
-    }, 5000)
+  setSpinner(isLoading = false) {
+    this.isSpinner = isLoading;
   }
 
 }

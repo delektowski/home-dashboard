@@ -1,5 +1,5 @@
-import {Component, inject, OnInit, DestroyRef} from '@angular/core';
-import {filter, forkJoin, fromEvent, map, Observable, switchMap, take, tap} from 'rxjs';
+import {Component, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
+import {forkJoin, fromEvent, map, Observable, switchMap, take, tap} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {HomeMeasuresService} from '../services/home-measures.service';
 import {ChartModule} from 'primeng/chart';
@@ -15,7 +15,8 @@ import {LabelsService} from '../services/labels.service';
   templateUrl: './home-measure.component.html',
   styleUrl: './home-measure.component.scss',
 })
-export class HomeMeasureComponent implements OnInit {
+export class HomeMeasureComponent implements OnInit, OnDestroy {
+  private intervalId: number | null = null;
   private destroyRef = inject(DestroyRef);
   private homeMeasuresService = inject(HomeMeasuresService);
   private labelsService = inject(LabelsService);
@@ -26,10 +27,19 @@ export class HomeMeasureComponent implements OnInit {
   placeNameChanged: string[] = [];
   protected visible: string = '';
 
+
   ngOnInit(): void {
     this.fetchPlaceNamesAndData();
     this.subscribeHomeMeasures();
     this.handleVisibilityChange();
+    this.refreshOnTimeInterval();
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 
   /**
@@ -40,6 +50,7 @@ export class HomeMeasureComponent implements OnInit {
    * stored in the respective class properties.
    */
   fetchPlaceNamesAndData(): void {
+    this.homeMeasuresService.setSpinner(true);
     this.homeMeasuresService.getMeasuresPlaceNames().pipe(
       take(1),
       map(result => result.data.getDistinctPlaceNames.placeNames),
@@ -55,15 +66,21 @@ export class HomeMeasureComponent implements OnInit {
           currentHomeMeasures: currentHomeMeasuresObservable
         });
       })
-    ).subscribe(results => {
-      this.homeMeasuresCharts = results.homeMeasures.map(result => {
-        return this.labelsService.handleLabelsValuesSeparation(result);
-      });
+    ).subscribe({
+      next: results => {
+        this.homeMeasuresCharts = results.homeMeasures.map(result => {
+          return this.labelsService.handleLabelsValuesSeparation(result);
+        });
 
-      results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
-        this.currentHomeMeasuresCharts.set(result.placeName, result);
-      });
-
+        results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
+          this.currentHomeMeasuresCharts.set(result.placeName, result);
+        });
+      },
+      error: (error) => {
+        this.homeMeasuresService.setSpinner(false);
+        console.error(error);},
+      complete: () => {setTimeout(() => this.homeMeasuresService.setSpinner(false), 500)
+      }
     });
   }
 
@@ -115,7 +132,7 @@ export class HomeMeasureComponent implements OnInit {
    * Subscribes to home measures updates from the service.
    */
   subscribeHomeMeasures(): void {
-    this.homeMeasuresService.subscribeMeasuresHome().pipe(map((result) => result?.data?.measuresHomeAdded)).subscribe((result) => {
+    this.homeMeasuresService.subscribeMeasuresHome().pipe(takeUntilDestroyed(this.destroyRef), map((result) => result?.data?.measuresHomeAdded)).subscribe((result) => {
       this.handleCurrentHM(result);
       if (!result?.isForCurrentMeasure && result?.placeName) {
         this.placeNameChanged?.push(result?.placeName);
@@ -148,9 +165,6 @@ export class HomeMeasureComponent implements OnInit {
 
   handleVisibilityChange(): void {
     fromEvent(document, 'visibilitychange').pipe(
-      tap(visible => {
-       this.homeMeasuresService.debugPWA()
-      }),
       takeUntilDestroyed(this.destroyRef),
       map(() => undefined)
     ).subscribe(() => {
@@ -158,6 +172,11 @@ export class HomeMeasureComponent implements OnInit {
     });
   }
 
+  private refreshOnTimeInterval() {
+    this.intervalId = window.setInterval(() => {
+      this.fetchPlaceNamesAndData();
+    }, 60000);
+  }
 
 
 }

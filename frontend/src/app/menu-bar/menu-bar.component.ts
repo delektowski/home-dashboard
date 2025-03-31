@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { Menubar, MenubarModule } from 'primeng/menubar';
-import { MenuItem, PrimeIcons } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { HomeMeasuresService } from '../services/home-measures.service';
-import { DarkModeService } from '../services/dark-mode.service';
+import {Component, inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {Menubar, MenubarModule} from 'primeng/menubar';
+import {MenuItem, PrimeIcons} from 'primeng/api';
+import {Button} from 'primeng/button';
+import {DarkModeService} from '../services/dark-mode.service';
 
 @Component({
   selector: 'app-menu-bar',
@@ -13,7 +12,6 @@ import { DarkModeService } from '../services/dark-mode.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class MenuBarComponent implements OnInit {
-
   items: MenuItem[] | undefined;
   isDarkMode = false;
   private darkModeService = inject(DarkModeService);
@@ -24,7 +22,7 @@ export class MenuBarComponent implements OnInit {
     this.items = [{
       label: 'Measures',
       icon: PrimeIcons.GAUGE,
-      iconStyle: { color: 'green', fontSize: '20px' },
+      iconStyle: {color: 'green', fontSize: '20px'},
       routerLink: 'measures',
     }];
   }
