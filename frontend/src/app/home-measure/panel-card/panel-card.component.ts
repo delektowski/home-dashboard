@@ -7,10 +7,11 @@ import {Badge} from 'primeng/badge';
 import {Severity} from '../../models/severity';
 import {DatePipe, NgClass} from '@angular/common';
 import {HomeMeasuresService} from '../../services/home-measures.service';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-panel-card',
-  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe, NgClass],
+  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe, NgClass, ProgressSpinner],
   templateUrl: './panel-card.component.html',
   styleUrl: './panel-card.component.scss',
 })
