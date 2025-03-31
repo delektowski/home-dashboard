@@ -152,7 +152,6 @@ export class HomeMeasureComponent implements OnInit {
        this.homeMeasuresService.debugPWA()
       }),
       takeUntilDestroyed(this.destroyRef),
-      filter(() => !document.hidden),
       map(() => undefined)
     ).subscribe(() => {
       this.fetchPlaceNamesAndData();
