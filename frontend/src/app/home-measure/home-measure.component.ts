@@ -1,13 +1,12 @@
 import {Component, inject, OnInit, DestroyRef} from '@angular/core';
 import {filter, forkJoin, fromEvent, map, Observable, switchMap, take, tap} from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {HomeMeasuresService} from '../services/home-measures.service';
 import {ChartModule} from 'primeng/chart';
 import {LineChartComponent} from './line-chart/line-chart.component';
 import {HomeMeasureModel} from '../models/home-measure.model';
 import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 import {LabelsService} from '../services/labels.service';
-
 
 
 @Component({
@@ -60,7 +59,6 @@ export class HomeMeasureComponent implements OnInit {
       this.homeMeasuresCharts = results.homeMeasures.map(result => {
         return this.labelsService.handleLabelsValuesSeparation(result);
       });
-
 
       results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
         this.currentHomeMeasuresCharts.set(result.placeName, result);
@@ -150,6 +148,9 @@ export class HomeMeasureComponent implements OnInit {
 
   handleVisibilityChange(): void {
     fromEvent(document, 'visibilitychange').pipe(
+      tap(visible => {
+       this.homeMeasuresService.debugPWA()
+      }),
       takeUntilDestroyed(this.destroyRef),
       filter(() => !document.hidden),
       map(() => undefined)
@@ -157,6 +158,7 @@ export class HomeMeasureComponent implements OnInit {
       this.fetchPlaceNamesAndData();
     });
   }
+
 
 
 }
