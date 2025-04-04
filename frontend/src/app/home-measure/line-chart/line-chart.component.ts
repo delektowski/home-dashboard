@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
-import { isPlatformBrowser } from '@angular/common';
-import { DarkModeService } from '../../services/dark-mode.service';
-import { ChartColorsEnum } from '../../models/chart-colors.enum';
-import { PanelCardComponent } from '../panel-card/panel-card.component';
+import {ChangeDetectorRef, Component, inject, Input, OnChanges, OnInit, PLATFORM_ID} from '@angular/core';
+import {ChartModule} from 'primeng/chart';
+import {isPlatformBrowser} from '@angular/common';
+import {DarkModeService} from '../../services/dark-mode.service';
+import {ChartColorsEnum} from '../../models/chart-colors.enum';
+import {PanelCardComponent} from '../panel-card/panel-card.component';
 
 @Component({
   selector: 'app-line-chart',
@@ -24,7 +24,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input() currentTemperature: number | undefined;
   @Input() currentHumidity: number | undefined;
   @Input() createdAt: string | undefined;
-  @Input() placeNameChanged: string[] = [];
+  @Input() placeNameChanged = new Set<string>();
 
   constructor(private cd: ChangeDetectorRef) {
   }
@@ -36,11 +36,11 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.placeName && this.placeNameChanged?.includes(this.placeName)) {
+    if (this.placeName && this.placeNameChanged.has(this.placeName)) {
       this.initChart();
-      this.placeNameChanged.pop();
-
+      this.placeNameChanged.delete(this.placeName);
     }
+
   }
 
   handleDarkMode() {
@@ -52,7 +52,6 @@ export class LineChartComponent implements OnInit, OnChanges {
   initChart() {
     if (isPlatformBrowser(this.platformId)) {
       const documentStyle = getComputedStyle(document.documentElement);
-      const textColor = documentStyle.getPropertyValue('--p-text-color');
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
       this.data = {
@@ -93,8 +92,6 @@ export class LineChartComponent implements OnInit, OnChanges {
         },
       };
       this.cd.markForCheck();
-
     }
   }
-
 }

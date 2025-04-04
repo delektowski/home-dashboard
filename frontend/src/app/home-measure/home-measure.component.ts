@@ -24,13 +24,12 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
   currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
   placeNames: string[] = [];
-  placeNameChanged: string[] = [];
+  placeNameChanged = new Set<string>();
   protected visible: string = '';
 
 
   ngOnInit(): void {
     this.fetchPlaceNamesAndData();
-    this.subscribeHomeMeasures();
     this.handleVisibilityChange();
     this.refreshOnTimeInterval();
   }
@@ -68,7 +67,14 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: results => {
+        const placeNamesChanged = new Set<string>();
         this.homeMeasuresCharts = results.homeMeasures.map(result => {
+          const placeName = result[0]?.placeName;
+          if (placeName) {
+            placeNamesChanged.add(placeName);
+            this.placeNameChanged = placeNamesChanged
+          }
+
           return this.labelsService.handleLabelsValuesSeparation(result);
         });
 
@@ -78,20 +84,11 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.homeMeasuresService.setSpinner(false);
-        console.error(error);},
-      complete: () => {setTimeout(() => this.homeMeasuresService.setSpinner(false), 500)
+        console.error(error);
+      },
+      complete: () => {
+        this.homeMeasuresService.setSpinner(false)
       }
-    });
-  }
-
-  /**
-   * Fetches home measures data from the service.
-   */
-  getHomeMeasures(): void {
-    forkJoin(this.getCurrentDayHomeMeasuresByPlaceName()).pipe(take(1)).subscribe((homeMeasuresResults) => {
-      this.homeMeasuresCharts = homeMeasuresResults.map((result) => {
-        return this.labelsService.handleLabelsValuesSeparation(result);
-      });
     });
   }
 
@@ -110,7 +107,6 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     );
   }
 
-
   /**
    * Fetches current home measures data for each place name.
    *
@@ -127,42 +123,6 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     );
   }
 
-
-  /**
-   * Subscribes to home measures updates from the service.
-   */
-  subscribeHomeMeasures(): void {
-    this.homeMeasuresService.subscribeMeasuresHome().pipe(takeUntilDestroyed(this.destroyRef), map((result) => result?.data?.measuresHomeAdded)).subscribe((result) => {
-      this.handleCurrentHM(result);
-      if (!result?.isForCurrentMeasure && result?.placeName) {
-        this.placeNameChanged?.push(result?.placeName);
-        this.getHomeMeasures();
-      }
-
-    });
-  }
-
-  /**
-   * Handles the current home measure result.
-   *
-   * @param {HomeMeasureModel | undefined} result - The home measure result to handle.
-   */
-  handleCurrentHM(result: HomeMeasureModel | undefined): void {
-    if (!result?.placeName) return;
-
-    if (result.isForCurrentMeasure) {
-      this.currentHomeMeasuresCharts.set(result.placeName, {
-        placeName: result.placeName,
-        temperature: result.temperature,
-        createdAt: result.createdAt,
-      });
-    } else if (result.placeName) {
-      this.placeNameChanged?.push(result.placeName);
-      this.getHomeMeasures();
-    }
-  }
-
-
   handleVisibilityChange(): void {
     fromEvent(document, 'visibilitychange').pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -175,7 +135,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   private refreshOnTimeInterval() {
     this.intervalId = window.setInterval(() => {
       this.fetchPlaceNamesAndData();
-    }, 60000);
+    }, 23000);
   }
 
 

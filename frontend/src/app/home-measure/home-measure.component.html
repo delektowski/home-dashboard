@@ -1,5 +1,5 @@
 @if (homeMeasuresCharts.length > 0) {
-  @for (homeMeasuresChart of homeMeasuresCharts; track homeMeasuresChart.placeName; let idx = $index) {
+  @for (homeMeasuresChart of homeMeasuresCharts;  let idx = $index; track idx;) {
     @if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values && homeMeasuresChart?.placeName) {
       <app-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
                       [placeName]="homeMeasuresChart?.placeName"
