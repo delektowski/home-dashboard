@@ -135,7 +135,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   private refreshOnTimeInterval() {
     this.intervalId = window.setInterval(() => {
       this.fetchPlaceNamesAndData();
-    }, 23000);
+    }, 60000);
   }
 
 
