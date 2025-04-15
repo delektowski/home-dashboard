@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HomeMeasureModel} from '../models/home-measure.model';
 import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 
@@ -20,8 +20,11 @@ export class LabelsService {
       }
       acc.labels.push(this.splitLabelTwoLines(current.createdAt));
       acc.values.push(current.temperature);
+      if (current?.humidity && acc.humidityValues) {
+        acc.humidityValues.push(current.humidity);
+      }
       return acc;
-    }, {labels: [], values: [], placeName: ''});
+    }, {labels: [], values: [], humidityValues: [], placeName: ''});
   }
 
   /**

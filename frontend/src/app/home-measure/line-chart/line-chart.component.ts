@@ -19,7 +19,7 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   @Input() axisX: unknown[] | undefined = [];
   @Input() axisY: unknown[] | undefined = [];
-  @Input() chartLineColor: ChartColorsEnum = ChartColorsEnum.BLUE;
+  @Input() chartLineColor: ChartColorsEnum = ChartColorsEnum.RED;
   @Input() placeName: string | undefined;
   @Input() currentTemperature: number | undefined;
   @Input() currentHumidity: number | undefined;
@@ -52,12 +52,14 @@ export class LineChartComponent implements OnInit, OnChanges {
   initChart() {
     if (isPlatformBrowser(this.platformId)) {
       const documentStyle = getComputedStyle(document.documentElement);
+      const textColor = documentStyle.getPropertyValue('--p-text-color');
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
       this.data = {
         labels: this.axisX,
         datasets: [
           {
+            label: "Temperatura",
             data: this.axisY,
             fill: false,
             borderColor: documentStyle.getPropertyValue(this.chartLineColor),
@@ -70,7 +72,11 @@ export class LineChartComponent implements OnInit, OnChanges {
         maintainAspectRatio: false,
         aspectRatio: 0.6,
         plugins: {
-          legend: false,
+          legend: {
+            labels: {
+              color: textColor
+            }
+          }
         },
         scales: {
           x: {

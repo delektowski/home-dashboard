@@ -1,6 +1,13 @@
-@if (homeMeasuresCharts.length > 0) {
-  @for (homeMeasuresChart of homeMeasuresCharts;  let idx = $index; track idx;) {
-    @if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values && homeMeasuresChart?.placeName) {
+@for (homeMeasuresChart of homeMeasuresCharts; let idx = $index; track idx; ) {
+  @if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values && homeMeasuresChart?.placeName) {
+    @if (homeMeasuresChart?.values && (homeMeasuresChart?.humidityValues?.length || 0) > 0) {
+      <app-multi-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
+                            [axisYBis]="homeMeasuresChart.humidityValues"
+                            [placeName]="homeMeasuresChart?.placeName"
+                            [currentTemperature]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.temperature : undefined"
+                            [createdAt]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.createdAt : undefined"
+                            [placeNameChanged]="placeNameChanged"></app-multi-line-chart>
+    } @else {
       <app-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
                       [placeName]="homeMeasuresChart?.placeName"
                       [currentTemperature]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.temperature : undefined"
@@ -11,3 +18,4 @@
     }
   }
 }
+

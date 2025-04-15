@@ -7,11 +7,12 @@ import {LineChartComponent} from './line-chart/line-chart.component';
 import {HomeMeasureModel} from '../models/home-measure.model';
 import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 import {LabelsService} from '../services/labels.service';
+import {MultiLineChartComponent} from './multi-line-chart/multi-line-chart.component';
 
 
 @Component({
   selector: 'app-home-measure',
-  imports: [ChartModule, LineChartComponent],
+  imports: [ChartModule, LineChartComponent, MultiLineChartComponent],
   templateUrl: './home-measure.component.html',
   styleUrl: './home-measure.component.scss',
 })
@@ -74,10 +75,8 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
             placeNamesChanged.add(placeName);
             this.placeNameChanged = placeNamesChanged
           }
-
           return this.labelsService.handleLabelsValuesSeparation(result);
         });
-
         results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
           this.currentHomeMeasuresCharts.set(result.placeName, result);
         });
