@@ -49,6 +49,25 @@ export class MeasuresHomeService {
     return this.currentMeasureHomeModel.findOne({ placeName }).exec();
   }
 
+  async getLatestMeasuresForAllPlaces(): Promise<{ placeNames: MeasuresHomeEntity[] }> {
+    const results = await this.measuresHomeModel.aggregate([
+      { $sort: { placeName: 1, createdAt: -1 } },
+      {
+        $group: {
+          _id: "$placeName",
+          temperature: { $first: "$temperature" },
+          humidity: { $first: "$humidity" },
+          placeName: { $first: "$placeName" },
+          createdAt: { $first: "$createdAt" }
+        }
+      }
+    ]).exec();
+
+    return { placeNames: results };
+  }
+
+
+
   async updateCurrentMeasureHome(
     measuresHomeDto: MeasuresHomeDto,
   ): Promise<CurrentMeasureHomeEntity> {

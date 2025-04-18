@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { MeasuresHomeModel } from './measures-home.model';
 
 @ObjectType()
 export class MeasuresPlaceNamesModel {
-  @Field(() => [String], { description: 'List of distinct place names', nullable: true })
-  placeNames: string[];
+  @Field(() => [MeasuresHomeModel], { nullable: true })
+  placeNames: MeasuresHomeModel[];
 }

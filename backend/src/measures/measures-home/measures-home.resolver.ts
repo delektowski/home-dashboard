@@ -42,6 +42,23 @@ export class MeasuresHomeResolver {
   }
 
   @Query(() => MeasuresPlaceNamesModel, {
+    name: 'getLatestMeasuresForAllPlaces',
+    description: 'Provides a latest measures list according to the place name',
+    nullable: true,
+  })
+  async getLatestMeasuresForAllPlaces() {
+    const measures = await this.measuresHomeService.getLatestMeasuresForAllPlaces();
+    console.log("koko", measures);
+
+    // Upewnienie się, że measures jest tablicą
+    const placeNamesArray = Array.isArray(measures) ? measures : [measures].filter(Boolean);
+
+    return {
+      placeNames: placeNamesArray
+    };
+  }
+
+  @Query(() => MeasuresPlaceNamesModel, {
     name: 'getDistinctPlaceNames',
     description: 'Provides a list of distinct place names',
     nullable: true,

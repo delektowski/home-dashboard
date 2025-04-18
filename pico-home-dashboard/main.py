@@ -6,6 +6,7 @@ from time import sleep
 from env import SSID, PASSWORD
 from logger import Logger
 from timer import set_time
+import gc  # Import garbage collector
 
 logger = Logger("logs/main_logs.txt")
 
@@ -46,6 +47,8 @@ def handle_connection(wlan):
         connect()
 
 try:
+    # Clean memory before starting
+    gc.collect()
     connect()
 except Exception as e:
     sleep(10)
