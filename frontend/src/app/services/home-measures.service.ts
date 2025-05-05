@@ -26,6 +26,17 @@ const GET_MEASURES_PLACE_NAMES = gql`
   }
 `;
 
+const GET_LATEST_MEASURES_FOR_ALL_PLACES = gql`
+  query getLatestMeasuresForAllPlaces {
+    getLatestMeasuresForAllPlaces {
+        placeName
+        temperature
+        humidity
+        createdAt
+      }
+  }
+`;
+
 const GET_CURRENT_MEASURE_HOME = gql`
   query getCurrentMeasureHome($placeName: String!) {
     getCurrentMeasureHome(placeName: $placeName) {
@@ -78,6 +89,21 @@ export class HomeMeasuresService {
         fetchPolicy: 'no-cache'
       })
       .valueChanges;
+  }
+
+
+  getLatestMeasuresForAllPlaces(): Observable<ApolloQueryResult<{
+
+      getLatestMeasuresForAllPlaces: HomeMeasureModel[]
+    }
+  >> {
+    return this.apollo.watchQuery< {
+        getLatestMeasuresForAllPlaces: HomeMeasureModel[]
+      }
+    >({
+        query: GET_LATEST_MEASURES_FOR_ALL_PLACES,
+        fetchPolicy: 'no-cache'
+      }).valueChanges;
   }
 
   getMeasuresPlaceNames(): Observable<ApolloQueryResult<{ getDistinctPlaceNames: MeasuresPlaceNames }>> {

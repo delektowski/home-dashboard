@@ -4,6 +4,7 @@ import { MeasuresHomeModel } from './models/measures-home.model';
 import { MeasuresHomeInput } from './models/measures-home-input.model';
 import { PubSub } from 'graphql-subscriptions';
 import {MeasuresPlaceNamesModel} from "./models/measures-place-names.model";
+import {MeasuresPlaceNamesLatest} from "./models/measures-place-names-latest.model";
 
 const pubSub = new PubSub();
 
@@ -41,21 +42,15 @@ export class MeasuresHomeResolver {
     return this.measuresHomeService.getCurrentMeasureHome(placeName);
   }
 
-  @Query(() => MeasuresPlaceNamesModel, {
+  @Query(() => [MeasuresPlaceNamesLatest], {
     name: 'getLatestMeasuresForAllPlaces',
     description: 'Provides a latest measures list according to the place name',
     nullable: true,
   })
   async getLatestMeasuresForAllPlaces() {
-    const measures = await this.measuresHomeService.getLatestMeasuresForAllPlaces();
-    console.log("koko", measures);
+    const result = await this.measuresHomeService.getLatestMeasuresForAllPlaces();
 
-    // Upewnienie się, że measures jest tablicą
-    const placeNamesArray = Array.isArray(measures) ? measures : [measures].filter(Boolean);
-
-    return {
-      placeNames: placeNamesArray
-    };
+    return result.placeNames
   }
 
   @Query(() => MeasuresPlaceNamesModel, {

@@ -62,7 +62,6 @@ export class MeasuresHomeService {
         }
       }
     ]).exec();
-
     return { placeNames: results };
   }
 
