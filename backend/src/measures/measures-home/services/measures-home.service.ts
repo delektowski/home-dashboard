@@ -51,6 +51,7 @@ export class MeasuresHomeService {
 
   async getLatestMeasuresForAllPlaces(): Promise<{ placeNames: MeasuresHomeEntity[] }> {
     const results = await this.measuresHomeModel.aggregate([
+
       { $sort: { placeName: 1, createdAt: -1 } },
       {
         $group: {
@@ -65,6 +66,42 @@ export class MeasuresHomeService {
     return { placeNames: results };
   }
 
+  async getMeasuresForAllPlaces(): Promise<{ placeNames: any[] }> {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    twoDaysAgo.setHours(0, 0, 0, 0);
+
+    const now = new Date();
+
+    const results = await this.measuresHomeModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: twoDaysAgo,
+            $lte: now
+          }
+        }
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$placeName",
+          placeName: { $first: "$placeName" },
+          measures: {
+            $push: {
+              _id: "$_id",
+              temperature: "$temperature",
+              humidity: "$humidity",
+              createdAt: "$createdAt"
+            }
+          }
+        }
+      }
+    ]).exec();
+
+    console.log('results with grouping', results[0]);
+    return { placeNames: results };
+  }
 
 
   async updateCurrentMeasureHome(

@@ -34,6 +34,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     this.handleVisibilityChange();
     this.refreshOnTimeInterval();
     this.getLatestMeasuresForAllPlaces();
+    this.getMeasuresForAllPlaces();
   }
 
   ngOnDestroy() {
@@ -134,6 +135,19 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  getMeasuresForAllPlaces() {
+    this.homeMeasuresService.getMeasuresForAllPlaces().subscribe({
+      next: (result) => {
+        console.log('Najnowsze pomiary dla wszystkich miejsc:', result.data.getMeasuresForAllPlaces);
+      },
+      error: (error) => {
+        console.error('Błąd podczas pobierania najnowszych pomiarów:', error);
+      }
+    });
+  }
+
+
 
   handleVisibilityChange(): void {
     fromEvent(document, 'visibilitychange').pipe(

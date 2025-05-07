@@ -5,6 +5,7 @@ import { MeasuresHomeInput } from './models/measures-home-input.model';
 import { PubSub } from 'graphql-subscriptions';
 import {MeasuresPlaceNamesModel} from "./models/measures-place-names.model";
 import {MeasuresPlaceNamesLatest} from "./models/measures-place-names-latest.model";
+import {MeasuresHomeAllModel} from "./models/measures-home-all.model";
 
 const pubSub = new PubSub();
 
@@ -53,15 +54,26 @@ export class MeasuresHomeResolver {
     return result.placeNames
   }
 
+  @Query(() => [MeasuresHomeAllModel], {
+    name: 'getMeasuresForAllPlaces',
+    description: 'Provides a measures data matching a 2 days time range',
+    nullable: true,
+  })
+  async getMeasuresForAllPlaces() {
+    const {placeNames} = await this.measuresHomeService.getMeasuresForAllPlaces()
+    console.log('koko.placeNames',placeNames)
+    return placeNames
+  }
+
   @Query(() => MeasuresPlaceNamesModel, {
     name: 'getDistinctPlaceNames',
     description: 'Provides a list of distinct place names',
     nullable: true,
   })
   async getDistinctPlaceNames() {
-    const placeNames = await this.measuresHomeService.getDistinctPlaceNames();
+    const results = await this.measuresHomeService.getDistinctPlaceNames();
     return {
-      placeNames: placeNames || []
+      placeNames: results || []
     };
   }
 

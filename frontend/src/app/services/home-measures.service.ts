@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {ApolloQueryResult, FetchResult} from '@apollo/client';
 import {HomeMeasureModel} from '../models/home-measure.model';
 import {MeasuresPlaceNames} from '../models/measures-place-names.model';
+import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.model';
 
 
 const GET_MEASURES_HOME = gql`
@@ -33,6 +34,19 @@ const GET_LATEST_MEASURES_FOR_ALL_PLACES = gql`
         temperature
         humidity
         createdAt
+      }
+  }
+`;
+
+const GET_MEASURES_FOR_ALL_PLACES = gql`
+  query getMeasuresForAllPlaces {
+    getMeasuresForAllPlaces {
+        placeName
+        measures {
+          temperature
+          humidity
+          createdAt
+        }
       }
   }
 `;
@@ -102,6 +116,19 @@ export class HomeMeasuresService {
       }
     >({
         query: GET_LATEST_MEASURES_FOR_ALL_PLACES,
+        fetchPolicy: 'no-cache'
+      }).valueChanges;
+  }
+  getMeasuresForAllPlaces(): Observable<ApolloQueryResult<{
+
+      getMeasuresForAllPlaces: HomeMeasuresAllPlacesModel
+    }
+  >> {
+    return this.apollo.watchQuery< {
+        getMeasuresForAllPlaces: HomeMeasuresAllPlacesModel
+      }
+    >({
+        query: GET_MEASURES_FOR_ALL_PLACES,
         fetchPolicy: 'no-cache'
       }).valueChanges;
   }
