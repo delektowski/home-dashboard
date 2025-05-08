@@ -27,6 +27,4 @@ export class MeasuresHomeDto {
   @IsDate()
   createdAt: Date;
 
-  @IsBoolean()
-  isForCurrentMeasure?: boolean
 }

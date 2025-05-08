@@ -21,51 +21,6 @@ export class MeasuresHomeService {
     return createMeasuresHome.save();
   }
 
-  async getMeasuresHome(
-    placeName: string,
-  ): Promise<MeasuresHomeEntity[] | null> {
-    const startOfYesterday = new Date();
-    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-    startOfYesterday.setHours(0, 0, 0, 0);
-
-
-    const now = new Date()
-    return this.measuresHomeModel.find({
-      placeName,
-      createdAt: {
-        $gte: startOfYesterday,
-        $lte: now
-      }
-    }).exec();
-  }
-
-  async getDistinctPlaceNames(): Promise<string[]> {
-    return this.measuresHomeModel.distinct('placeName').exec();
-  }
-
-  async getCurrentMeasureHome(
-    placeName: string,
-  ): Promise<CurrentMeasureHomeEntity | null> {
-    return this.currentMeasureHomeModel.findOne({ placeName }).exec();
-  }
-
-  async getLatestMeasuresForAllPlaces(): Promise<{ placeNames: MeasuresHomeEntity[] }> {
-    const results = await this.measuresHomeModel.aggregate([
-
-      { $sort: { placeName: 1, createdAt: -1 } },
-      {
-        $group: {
-          _id: "$placeName",
-          temperature: { $first: "$temperature" },
-          humidity: { $first: "$humidity" },
-          placeName: { $first: "$placeName" },
-          createdAt: { $first: "$createdAt" }
-        }
-      }
-    ]).exec();
-    return { placeNames: results };
-  }
-
   async getMeasuresForAllPlaces(): Promise<{ placeNames: any[] }> {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
@@ -82,14 +37,15 @@ export class MeasuresHomeService {
           }
         }
       },
-      { $sort: { createdAt: -1 } },
+      { $sort: { createdAt: 1 } },
       {
         $group: {
           _id: "$placeName",
-          placeName: { $first: "$placeName" },
+         
           measures: {
             $push: {
               _id: "$_id",
+              placeName: "$placeName",
               temperature: "$temperature",
               humidity: "$humidity",
               createdAt: "$createdAt"

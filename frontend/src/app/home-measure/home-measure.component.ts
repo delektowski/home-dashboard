@@ -8,6 +8,7 @@ import {HomeMeasureModel} from '../models/home-measure.model';
 import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 import {LabelsService} from '../services/labels.service';
 import {MultiLineChartComponent} from './multi-line-chart/multi-line-chart.component';
+import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.model';
 
 
 @Component({
@@ -24,16 +25,13 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
 
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
   currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
-  placeNames: string[] = [];
   placeNameChanged = new Set<string>();
   protected visible: string = '';
 
 
   ngOnInit(): void {
-    this.fetchPlaceNamesAndData();
     this.handleVisibilityChange();
     this.refreshOnTimeInterval();
-    this.getLatestMeasuresForAllPlaces();
     this.getMeasuresForAllPlaces();
   }
 
@@ -44,123 +42,63 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Fetches place names and their corresponding home measures data.
-   *
-   * This method first retrieves distinct place names, then uses those names to fetch
-   * both home measures and current home measures data. The results are processed and
-   * stored in the respective class properties.
-   */
-  fetchPlaceNamesAndData(): void {
+  getMeasuresForAllPlaces() {
     this.homeMeasuresService.setSpinner(true);
-    this.homeMeasuresService.getMeasuresPlaceNames().pipe(
-      take(1),
-      map(result => result.data.getDistinctPlaceNames.placeNames),
-      tap(placeNames => {
-        this.placeNames = placeNames;
-      }),
-      switchMap(placeNames => {
-        const homeMeasuresObservable = forkJoin(this.getCurrentDayHomeMeasuresByPlaceName());
-        const currentHomeMeasuresObservable = forkJoin(this.getCurrentHomeMeasuresByPlaceName());
+    this.homeMeasuresService.getMeasuresForAllPlaces().pipe(take(1), map((result) => result.data.getMeasuresForAllPlaces)).subscribe({
+      next: (result) => {
+       this.setChartsAndCurrentHomeMeasures(result);
 
-        return forkJoin({
-          homeMeasures: homeMeasuresObservable,
-          currentHomeMeasures: currentHomeMeasuresObservable
-        });
-      })
-    ).subscribe({
-      next: results => {
-        const placeNamesChanged = new Set<string>();
-        this.homeMeasuresCharts = results.homeMeasures.map(result => {
-          const placeName = result[0]?.placeName;
-          if (placeName) {
-            placeNamesChanged.add(placeName);
-            this.placeNameChanged = placeNamesChanged
-          }
-          return this.labelsService.handleLabelsValuesSeparation(result);
-        });
-        console.log('results.currentHomeMeasures',results.currentHomeMeasures)
-        results.currentHomeMeasures.filter(result => result !== null).forEach(result => {
-          this.currentHomeMeasuresCharts.set(result.placeName, result);
-        });
       },
+
       error: (error) => {
+        console.error('Błąd podczas pobierania najnowszych pomiarów:', error);
         this.homeMeasuresService.setSpinner(false);
-        console.error(error);
       },
       complete: () => {
-        this.homeMeasuresService.setSpinner(false)
+        this.homeMeasuresService.setSpinner(false);
       }
     });
   }
 
-  /**
-   * Fetches home measures data for each place name.
-   *
-   * @returns {Observable<HomeMeasureModel[]>[]} An array of observables, each fetching the home measures for a specific place name.
-   */
-  getCurrentDayHomeMeasuresByPlaceName(): Observable<HomeMeasureModel[]>[] {
-    return this.placeNames.map((placeName) =>
-      this.homeMeasuresService.getMeasuresHome(placeName)
-        .pipe(
-          take(1),
-          map(result => result.data.getMeasuresHome),
-        ),
-    );
-  }
+  setChartsAndCurrentHomeMeasures(result: HomeMeasuresAllPlacesModel[]) {
+    const currentHomeMeasures: any[] = []
+    const homeMeasures: any[] = []
+    result.forEach((measure) => {
+      homeMeasures.push(measure.measures);
+      currentHomeMeasures.push(measure.measures.at(-1));
 
-  /**
-   * Fetches current home measures data for each place name.
-   *
-   * @returns {Observable<HomeMeasureModel>[]} An array of observables, each fetching the current home measure for a specific place name.
-   */
-  getCurrentHomeMeasuresByPlaceName(): Observable<HomeMeasureModel>[] {
-    return this.placeNames.map((placeName) => {
-        return this.homeMeasuresService.getCurrentHomeMeasure(placeName)
-          .pipe(
-            take(1),
-            map(result => result.data.getCurrentMeasureHome),
-          )
-      }
-    );
-  }
+    })
+    const obj = {homeMeasures,currentHomeMeasures
 
-  getLatestMeasuresForAllPlaces() {
-    this.homeMeasuresService.getLatestMeasuresForAllPlaces().subscribe({
-      next: (result) => {
-        console.log('Najnowsze pomiary dla wszystkich miejsc:', result.data.getLatestMeasuresForAllPlaces);
-      },
-      error: (error) => {
-        console.error('Błąd podczas pobierania najnowszych pomiarów:', error);
+    }
+
+    const placeNamesChanged = new Set<string>();
+    this.homeMeasuresCharts = obj.homeMeasures.map(result => {
+      const placeName = result[0]?.placeName;
+      if (placeName) {
+        placeNamesChanged.add(placeName);
+        this.placeNameChanged = placeNamesChanged
       }
+      return this.labelsService.handleLabelsValuesSeparation(result);
     });
-  }
-
-  getMeasuresForAllPlaces() {
-    this.homeMeasuresService.getMeasuresForAllPlaces().subscribe({
-      next: (result) => {
-        console.log('Najnowsze pomiary dla wszystkich miejsc:', result.data.getMeasuresForAllPlaces);
-      },
-      error: (error) => {
-        console.error('Błąd podczas pobierania najnowszych pomiarów:', error);
-      }
+    obj.currentHomeMeasures.filter(result => result !== null).forEach(result => {
+      this.currentHomeMeasuresCharts.set(result.placeName, result);
     });
+    this.homeMeasuresService.setSpinner(false);
   }
-
-
 
   handleVisibilityChange(): void {
     fromEvent(document, 'visibilitychange').pipe(
       takeUntilDestroyed(this.destroyRef),
       map(() => undefined)
     ).subscribe(() => {
-      this.fetchPlaceNamesAndData();
+      this.getMeasuresForAllPlaces();
     });
   }
 
   private refreshOnTimeInterval() {
     this.intervalId = window.setInterval(() => {
-      this.fetchPlaceNamesAndData();
+      this.getMeasuresForAllPlaces();
     }, 60000);
   }
 
