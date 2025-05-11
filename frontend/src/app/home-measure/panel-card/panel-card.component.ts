@@ -54,13 +54,13 @@ export class PanelCardComponent implements OnChanges, AfterViewInit {
       if (temperature >= 18 && temperature < 20) {
         this.severityValue.set("info");
       }
-      if (temperature > 20 && temperature < 22) {
+      if (temperature >= 20 && temperature < 22) {
         this.severityValue.set("success");
       }
       if (temperature >= 22 && temperature < 24) {
         this.severityValue.set("warn");
       }
-      if (temperature > 24) {
+      if (temperature >= 24) {
         this.severityValue.set("danger");
       }
     }

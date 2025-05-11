@@ -3,15 +3,13 @@ import { MeasuresHomeDto } from '../dto/measures-home.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MeasuresHomeEntity } from '../schemas/measures-home.schema';
-import { CurrentMeasureHomeEntity } from '../schemas/current-measure-home.schema';
+import {MeasuresHomeModel} from "../models/measures-home.model";
 
 @Injectable()
 export class MeasuresHomeService {
   constructor(
     @InjectModel(MeasuresHomeEntity.name)
     private measuresHomeModel: Model<MeasuresHomeEntity>,
-    @InjectModel(CurrentMeasureHomeEntity.name)
-    private currentMeasureHomeModel: Model<CurrentMeasureHomeEntity>,
   ) {}
 
   async createMeasuresHome(
@@ -21,46 +19,38 @@ export class MeasuresHomeService {
     return createMeasuresHome.save();
   }
 
-  async getMeasuresHome(
-    placeName: string,
-  ): Promise<MeasuresHomeEntity[] | null> {
-    const startOfYesterday = new Date();
-    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-    startOfYesterday.setHours(0, 0, 0, 0);
+  async getMeasuresForAllPlaces(): Promise<MeasuresHomeModel[]> {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    twoDaysAgo.setHours(0, 0, 0, 0);
 
+    const now = new Date();
 
-    const now = new Date()
-    return this.measuresHomeModel.find({
-      placeName,
-      createdAt: {
-        $gte: startOfYesterday,
-        $lte: now
+    return await this.measuresHomeModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: twoDaysAgo,
+            $lte: now
+          }
+        }
+      },
+      { $sort: { createdAt: 1 } },
+      {
+        $group: {
+          _id: "$placeName",
+         
+          measures: {
+            $push: {
+              _id: "$_id",
+              placeName: "$placeName",
+              temperature: "$temperature",
+              humidity: "$humidity",
+              createdAt: "$createdAt"
+            }
+          }
+        }
       }
-    }).exec();
-  }
-
-  async getDistinctPlaceNames(): Promise<string[]> {
-    return this.measuresHomeModel.distinct('placeName').exec();
-  }
-
-  async getCurrentMeasureHome(
-    placeName: string,
-  ): Promise<CurrentMeasureHomeEntity | null> {
-    return this.currentMeasureHomeModel.findOne({ placeName }).exec();
-  }
-
-  async updateCurrentMeasureHome(
-    measuresHomeDto: MeasuresHomeDto,
-  ): Promise<CurrentMeasureHomeEntity> {
-    return this.currentMeasureHomeModel
-      .findOneAndUpdate(
-        { placeName: measuresHomeDto.placeName },
-        measuresHomeDto,
-        {
-          upsert: true,
-          new: true,
-        },
-      )
-      .exec();
+    ]).exec();
   }
 }

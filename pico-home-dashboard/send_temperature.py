@@ -5,10 +5,13 @@ import urequests as requests
 import json
 from machine import reset
 from logger import Logger
+import gc 
 
-logger = Logger("logs/send_temperature_logs.txt")
+logger = Logger("send_temperature_logs.txt")
 
-def send_temperature(temperature: float, pressure = 0.0, humidity = 0.0):
+def send_temperature(wdt, temperature: float, humidity = None):
+    wdt.feed()
+    gc.collect()
     
     gql_url = GQL_URL
     gql_mutation = """
@@ -16,21 +19,21 @@ def send_temperature(temperature: float, pressure = 0.0, humidity = 0.0):
             createMeasuresHome(measuresHomeData: $measuresHomeData) {
                 placeName
                 temperature
+                humidity
             }
         }
         """
     gql_variables = {
-                    "measuresHomeData": {
-                        "placeName": PLACE_NAME,
-                        "temperature":temperature
-                        }
-                    }
+        "measuresHomeData": {"placeName": PLACE_NAME, "temperature": temperature,"humidity": humidity } }
     payload = {"query": gql_mutation, "variables": gql_variables}
     headers = {"Content-Type": "application/json"}
     payload_json = json.dumps(payload)
     
+    response = None
+    wdt.feed()
     try:
         response = requests.post(gql_url, data=payload_json, headers=headers)
+        wdt.feed()
         
         if response.status_code == 200:
             print("GraphQL mutation successful")
@@ -50,5 +53,6 @@ def send_temperature(temperature: float, pressure = 0.0, humidity = 0.0):
         raise
 
     finally:
-        if 'response' in locals():
+        if response:
             response.close()
+        gc.collect()

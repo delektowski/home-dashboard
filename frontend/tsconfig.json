@@ -10,7 +10,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
