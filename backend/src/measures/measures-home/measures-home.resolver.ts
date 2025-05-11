@@ -14,9 +14,9 @@ export class MeasuresHomeResolver {
     nullable: true,
   })
   async getMeasuresForAllPlaces() {
-    const { placeNames } =
-      await this.measuresHomeService.getMeasuresForAllPlaces();
-    return placeNames;
+
+
+    return await this.measuresHomeService.getMeasuresForAllPlaces();
   }
 
   @Mutation(() => MeasuresHomeModel)
@@ -25,17 +25,6 @@ export class MeasuresHomeResolver {
   ) {
     const createdAt = new Date();
     return await this.measuresHomeService.createMeasuresHome({
-      ...measuresHomeData,
-      createdAt,
-    });
-  }
-
-  @Mutation(() => MeasuresHomeModel)
-  async createCurrentMeasuresHome(
-    @Args('measuresHomeData') measuresHomeData: MeasuresHomeInput,
-  ) {
-    const createdAt = new Date();
-    return await this.measuresHomeService.updateCurrentMeasureHome({
       ...measuresHomeData,
       createdAt,
     });
