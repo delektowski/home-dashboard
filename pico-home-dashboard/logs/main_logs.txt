@@ -1,0 +1,14 @@
+[2021-01-01 00:03:57] [0] BEFORE retry_connect
+[2021-01-01 00:03:57] [0] 12WHILE retry_connect
+[2021-01-01 00:03:58] [1] 12WHILE retry_connect
+[2021-01-01 00:03:59] [2] 12WHILE retry_connect
+[2021-01-01 00:04:00] [3] 12WHILE retry_connect
+[1970-01-01 00:00:01] [Connected to ip: 192.168.8.118] handle_connection
+[1970-01-01 00:00:01] [Free memory: 173216] handle_connection
+[1970-01-01 00:00:01] [unknown] LED ON
+[1970-01-01 00:00:01] [unknown] LED OFF
+[1970-01-01 00:00:01] [unknown] Getting temperature...
+[1970-01-01 00:00:01] [Connected to ip: 192.168.8.118] handle_connection
+[1970-01-01 00:00:01] [Free memory: 175568] handle_connection
+[1970-01-01 00:00:01] [unknown] LED ON
+[1970-01-01 00:00:01] [unknown] LED OFF

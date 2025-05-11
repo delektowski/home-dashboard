@@ -68,12 +68,12 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       currentHomeMeasures.push(measure.measures.at(-1));
 
     })
-    const obj = {homeMeasures,currentHomeMeasures
+    const chartsAndCurrentMeasures = {homeMeasures,currentHomeMeasures
 
     }
 
     const placeNamesChanged = new Set<string>();
-    this.homeMeasuresCharts = obj.homeMeasures.map(result => {
+    this.homeMeasuresCharts = chartsAndCurrentMeasures.homeMeasures.map(result => {
       const placeName = result[0]?.placeName;
       if (placeName) {
         placeNamesChanged.add(placeName);
@@ -81,7 +81,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       }
       return this.labelsService.handleLabelsValuesSeparation(result);
     });
-    obj.currentHomeMeasures.filter(result => result !== null).forEach(result => {
+    chartsAndCurrentMeasures.currentHomeMeasures.filter(result => result !== null).forEach(result => {
       this.currentHomeMeasuresCharts.set(result.placeName, result);
     });
     this.homeMeasuresService.setSpinner(false);

@@ -40,18 +40,13 @@ def connect():
 
 def handle_connection(wlan):
     retry_connect = 0
-    print("BEFORE retry_connect: ", retry_connect)
-    logger.log("BEFORE retry_connect", str(retry_connect))
     while wlan.isconnected() == False:
-        print("WHILE retry_connect: ", retry_connect)
-        logger.log("12WHILE retry_connect", str(retry_connect))
         print("Waiting for connection...")
         wdt.feed()
         sleep(1)
         wdt.feed()
         retry_connect += 1
         if retry_connect > 20:
-            logger.log("CONNCCECT WHILE ", str(retry_connect))
             retry_connect = 0
             wdt.feed()
             connect()
@@ -77,7 +72,6 @@ def handle_connection(wlan):
 
     try:
         print("Getting temperature...")
-        logger.log("Getting temperature...")
         wdt.feed()
         get_temp(wdt)
     except Exception as e:
