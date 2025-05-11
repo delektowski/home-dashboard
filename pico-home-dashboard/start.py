@@ -1,7 +1,6 @@
 from blink_led import GQL_SUCCESS, WIFI_SUCCESS, InternalLed
-from get_temperature import get_temp
 import network
-from send_current_temperature import send_current_temperature
+from env import SENSOR_TYPE
 from time import sleep
 from env import SSID, PASSWORD
 from logger import Logger
@@ -73,7 +72,7 @@ def handle_connection(wlan):
     try:
         print("Getting temperature...")
         wdt.feed()
-        get_temp(wdt)
+        handle_sensor_type()
     except Exception as e:
         free_mem = gc.mem_free()
         print("Handle connection error: ", e)
@@ -83,6 +82,23 @@ def handle_connection(wlan):
         sleep(5)
         wdt.feed()
         connect()
+        
+def handle_sensor_type():
+    try:
+        sensor_type = SENSOR_TYPE
+        if sensor_type == "DHT11":
+            from get_temperature_dht11 import get_temp_dht11
+            get_temp_dht11(wdt)
+        elif sensor_type == "DS18X20":
+            from get_temp_ds18x20 import get_temp_ds18x20
+            get_temp_ds18x20(wdt)
+        else:
+            print("Invalid sensor type")
+    except Exception as e:
+        free_mem = gc.mem_free()
+        print("Sensor type error: ", e)
+        logger.log("Sensor type error", str(e))
+        logger.log("Sensor type error","Free memory: " + str(free_mem))
 
 try:
     connect()

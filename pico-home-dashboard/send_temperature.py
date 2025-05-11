@@ -9,7 +9,7 @@ import gc
 
 logger = Logger("send_temperature_logs.txt")
 
-def send_temperature(wdt, temperature: float, humidity = 0.0):
+def send_temperature(wdt, temperature: float, humidity = None):
     wdt.feed()
     gc.collect()
     
