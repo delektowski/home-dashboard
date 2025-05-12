@@ -61,6 +61,12 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
       const textColor = documentStyle.getPropertyValue('--p-text-color');
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+      const minValue = Math.min(...(this.axisY as number[] || []).filter(val => val !== null && val !== undefined));
+      const maxValue = Math.max(...(this.axisY as number[] || []).filter(val => val !== null && val !== undefined));
+
+      const range = maxValue - minValue;
+      const buffer = range * 0.2;
+
       this.data = {
         labels: this.axisX,
         datasets: [
@@ -108,6 +114,8 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
             type: 'linear',
             display: true,
             position: 'left',
+            min: Math.floor(minValue - buffer),
+            max: Math.ceil(maxValue + buffer),
             ticks: {
               color: textColorSecondary
             },
