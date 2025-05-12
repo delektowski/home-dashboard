@@ -46,12 +46,12 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     this.homeMeasuresService.setSpinner(true);
     this.homeMeasuresService.getMeasuresForAllPlaces().pipe(take(1), map((result) => result.data.getMeasuresForAllPlaces)).subscribe({
       next: (result) => {
-       this.setChartsAndCurrentHomeMeasures(result);
+        this.setChartsAndCurrentHomeMeasures(result);
 
       },
 
       error: (error) => {
-        console.error('Błąd podczas pobierania najnowszych pomiarów:', error);
+        console.error('getMeasuresForAllPlaces error:', error);
         this.homeMeasuresService.setSpinner(false);
       },
       complete: () => {
@@ -61,20 +61,26 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   }
 
   setChartsAndCurrentHomeMeasures(result: HomeMeasuresAllPlacesModel[]) {
-    const currentHomeMeasures: any[] = []
-    const homeMeasures: any[] = []
-    result.forEach((measure) => {
-      homeMeasures.push(measure.measures);
-      currentHomeMeasures.push(measure.measures.at(-1));
-
-    })
-    const chartsAndCurrentMeasures = {homeMeasures,currentHomeMeasures
-
+    const currentHomeMeasures: HomeMeasureModel[] = []
+    const homeMeasures: HomeMeasureModel[][] = []
+    const placeNamesChanged = new Set<string>();
+    const chartsAndCurrentMeasures = {
+      homeMeasures, currentHomeMeasures
     }
 
-    const placeNamesChanged = new Set<string>();
-    this.homeMeasuresCharts = chartsAndCurrentMeasures.homeMeasures.map(result => {
-      const placeName = result[0]?.placeName;
+    result.forEach((measure) => {
+      homeMeasures.push(measure.measures);
+      const lastMeasure = measure.measures.at(-1);
+      if (lastMeasure) {
+        currentHomeMeasures.push(lastMeasure);
+      }
+
+    })
+
+    this.homeMeasuresCharts = chartsAndCurrentMeasures.homeMeasures.sort((a, b) => {
+      return (a[0]['placeName'] || '').localeCompare(b[0]['placeName'] || '');
+    }).map(result => {
+      const placeName = result[0]['placeName'];
       if (placeName) {
         placeNamesChanged.add(placeName);
         this.placeNameChanged = placeNamesChanged
