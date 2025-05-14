@@ -1,11 +1,10 @@
 .header-place-name {
   display: inline-block;
-  //inline-size: 6rem;
-  //margin-right: 2rem;
+  inline-size: 6rem;
 }
 
 .badge-width {
-  width: 60px;
+  inline-size: 3.75rem;
 }
 
 .container__badges {
@@ -30,8 +29,6 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-
 
   & > p {
     font-size: .6rem;
