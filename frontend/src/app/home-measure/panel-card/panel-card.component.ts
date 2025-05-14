@@ -21,16 +21,20 @@ export class PanelCardComponent implements OnChanges, AfterViewInit {
   title: string | undefined = 'unknown name';
   @Input()
   currentTemperature: number | undefined;
+  @Input() currentHumidity: number | undefined;
   @Input() createdAt: string | undefined;
 
 
-  protected severityValue: WritableSignal<Severity> = signal<Severity>("secondary");
+  protected severityValueTemperature: WritableSignal<Severity> = signal<Severity>("secondary");
+
+  protected severityValueHumidity: WritableSignal<Severity> = signal<Severity>("secondary");
 
   isInitialized = false;
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.setBadgeColor(this.currentTemperature);
+    this.setTemperatureBadgeColor(this.currentTemperature);
+    this.setHumidityBadgeColor(this.currentHumidity);
   }
 
   /**
@@ -39,32 +43,45 @@ export class PanelCardComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.isInitialized = true;
-    },80);
+    }, 80);
   }
 
-  setBadgeColor(temperature: number | undefined) {
+  setTemperatureBadgeColor(temperature: number | undefined) {
     if (temperature) {
       if (temperature <= 1) {
-        this.severityValue.set("secondary");
+        this.severityValueTemperature.set("secondary");
       }
       if (temperature > 1 &&
         temperature < 18) {
-        this.severityValue.set("contrast");
+        this.severityValueTemperature.set("contrast");
       }
       if (temperature >= 18 && temperature < 20) {
-        this.severityValue.set("info");
+        this.severityValueTemperature.set("info");
       }
       if (temperature >= 20 && temperature < 22) {
-        this.severityValue.set("success");
+        this.severityValueTemperature.set("success");
       }
       if (temperature >= 22 && temperature < 24) {
-        this.severityValue.set("warn");
+        this.severityValueTemperature.set("warn");
       }
       if (temperature >= 24) {
-        this.severityValue.set("danger");
+        this.severityValueTemperature.set("danger");
       }
     }
+  }
 
+  setHumidityBadgeColor(humidity: number | undefined) {
+    if (humidity) {
+      if (humidity <= 65) {
+        this.severityValueHumidity.set("success");
+      }
+      if (humidity > 65 && humidity <= 80) {
+        this.severityValueHumidity.set("warn");
+      }
+      if (humidity > 80) {
+        this.severityValueHumidity.set("danger");
+      }
+    }
   }
 
   onCollapsedChange($event: any) {

@@ -1,19 +1,36 @@
 .header-place-name {
   display: inline-block;
-  inline-size: 6rem;
-  margin-right: 2rem;
+  //inline-size: 6rem;
+  //margin-right: 2rem;
 }
 
 .badge-width {
-  width: 80px;
+  width: 60px;
 }
 
-.container__current-temp {
-  inline-size: 12rem;
+.container__badges {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto auto;
+  gap: .3rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.badge-temperature {
+  grid-row: 1;
+}
+
+.badge-humidity {
+  grid-row: 2;
+}
+
+.container__badge {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
 
 
   & > p {
@@ -33,3 +50,5 @@
   inline-size: 1rem;
   block-size: 1rem;
 }
+
+

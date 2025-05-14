@@ -9,13 +9,30 @@
         }
       </span>
 
-      @if (currentTemperature) {
-        <div class="container__current-temp">
-          <p-badge styleClass="badge-width" value="{{currentTemperature}} &deg;C " badgeSize="xlarge"
-                   [severity]=severityValue()/>
-            <p>{{ createdAt | date:'H:mm' }}</p>
-        </div>
-      }
+
+      <div class="container__badges">
+        @if (currentTemperature) {
+          <div class="container__badge badge-temperature" title="temperature">
+            <p-badge styleClass="badge-width" value="{{currentTemperature}} &deg;C " badgeSize="xlarge"
+                     [severity]=severityValueTemperature()/>
+              @if (!currentHumidity) {
+
+              <p>{{ createdAt | date:'H:mm' }}</p>
+              }
+          </div>
+        }
+        @if (currentHumidity) {
+          <div class="container__badge badge-humidity" title="humidity">
+            <p-badge styleClass="badge-width" value="{{currentHumidity}}% " badgeSize="xlarge"
+                     [severity]=severityValueHumidity()/>
+
+
+                <p>{{ createdAt | date:'H:mm' }}</p>
+
+          </div>
+        }
+      </div>
+
     </ng-template>
     <ng-content></ng-content>
   </p-panel>

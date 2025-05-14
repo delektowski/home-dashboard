@@ -5,12 +5,16 @@
                             [axisYBis]="homeMeasuresChart.humidityValues"
                             [placeName]="homeMeasuresChart?.placeName"
                             [currentTemperature]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.temperature : undefined"
+
+                            [currentHumidity]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.humidity : undefined"
+
                             [createdAt]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.createdAt : undefined"
                             [placeNameChanged]="placeNameChanged"></app-multi-line-chart>
     } @else {
       <app-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
                       [placeName]="homeMeasuresChart?.placeName"
                       [currentTemperature]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.temperature : undefined"
+
                       [createdAt]="currentHomeMeasuresCharts.has(homeMeasuresChart.placeName) ? currentHomeMeasuresCharts.get(homeMeasuresChart.placeName)?.createdAt : undefined"
                       [placeNameChanged]="placeNameChanged"
 

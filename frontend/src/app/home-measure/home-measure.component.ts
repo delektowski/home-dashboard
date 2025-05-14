@@ -27,8 +27,6 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
   placeNameChanged = new Set<string>();
   protected visible: string = '';
-
-
   ngOnInit(): void {
     this.handleVisibilityChange();
     this.refreshOnTimeInterval();
