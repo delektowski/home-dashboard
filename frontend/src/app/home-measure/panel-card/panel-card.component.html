@@ -31,9 +31,46 @@
        title="measureType">
     <p-badge styleClass="badge-width" value="{{value}} {{temperatureKeys.has(measureType) ? '&deg;C' : '%'}} " badgeSize="xlarge"
              [severity]="severityConfig.get(measureType)?.() || defaultSeverity()"/>
+    <ng-container *ngTemplateOutlet="badgeIcon" />
+
 
   </div>
   @if (createdAt) {
     <p class="created-at">{{ createdAt | date:'H:mm' }}</p>
   }
+
+  <ng-template #badgeIcon>
+
+    @switch (measureType) {
+      @case ('temperature') {
+        <i class="pi pi-sun" style="font-size: .5rem"></i>
+      }
+      @case ('maxTemperature') {
+        <i class="pi pi-arrow-up" style="font-size: .5rem"></i>
+      }
+      @case ('minTemperature') {
+        <i class="pi pi-arrow-down" style="font-size: .5rem"></i>
+      }
+      @case ('avgTemperature') {
+        <i class="pi pi-chart-line" style="font-size: .5rem"></i>
+      }
+      @case ('humidity') {
+        <i class="pi pi-percentage" style="font-size: .5rem"></i>
+      }
+      @case ('maxHumidity') {
+        <i class="pi pi-arrow-up" style="font-size: .5rem"></i>
+      }
+      @case ('minHumidity') {
+        <i class="pi pi-arrow-down" style="font-size: .5rem"></i>
+      }
+      @case ('avgHumidity') {
+        <i class="pi pi-chart-line" style="font-size: .5rem"></i>
+      }
+      @default {
+        <i class="pi pi-check" style="font-size: .5rem"></i>
+      }
+    }
+  </ng-template>
 </ng-template>
+
+

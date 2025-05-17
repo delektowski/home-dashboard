@@ -98,14 +98,12 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   setTemperatureSeverityColor(temperature: number | undefined): WritableSignal<Severity> {
     const severityValue = signal<Severity>("secondary")
     if (temperature) {
-      if (temperature <= 1) {
-        severityValue.set("secondary");
-      }
-      if (temperature > 1 &&
-        temperature < 18) {
+
+      if (
+        temperature < 12) {
         severityValue.set("contrast");
       }
-      if (temperature >= 18 && temperature < 20) {
+      if (temperature >= 12 && temperature < 20) {
         severityValue.set("info");
       }
       if (temperature >= 20 && temperature < 22) {

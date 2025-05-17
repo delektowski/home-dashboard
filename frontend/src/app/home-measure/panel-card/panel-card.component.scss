@@ -5,6 +5,8 @@
 
 .badge-width {
   inline-size: 3.75rem;
+  padding-inline-start: .5rem;
+  padding-inline-end: 0;
 }
 
 .container__badges {
@@ -34,10 +36,17 @@
 }
 
 .container__badge {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
+  & i {
+    position: absolute;
+    left: .2rem;
+    color: black;
+  }
 }
 
 .hide-uninitialized {
