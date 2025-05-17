@@ -8,6 +8,12 @@ import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.mod
 const GET_MEASURES_FOR_ALL_PLACES = gql`
   query getMeasuresForAllPlaces {
     getMeasuresForAllPlaces {
+      maxTemperature
+      minTemperature
+      avgTemperature
+      maxHumidity
+      minHumidity
+      avgHumidity
       measures {
         placeName
         temperature

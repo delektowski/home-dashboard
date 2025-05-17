@@ -9,6 +9,7 @@ import {HomeMeasureChartModel} from '../models/home-measure-chart.model';
 import {LabelsService} from '../services/labels.service';
 import {MultiLineChartComponent} from './multi-line-chart/multi-line-chart.component';
 import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.model';
+import {HomeMeasuresLastAggregatedModel} from '../models/home-measures-last-aggregated.model';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   private labelsService = inject(LabelsService);
 
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
-  currentHomeMeasuresCharts = new Map<string, HomeMeasureModel>();
+  measuresLastAggregated = new Map<string, HomeMeasuresLastAggregatedModel>();
   placeNameChanged = new Set<string>();
   protected visible: string = '';
   ngOnInit(): void {
@@ -59,7 +60,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   }
 
   setChartsAndCurrentHomeMeasures(result: HomeMeasuresAllPlacesModel[]) {
-    const currentHomeMeasures: HomeMeasureModel[] = []
+    const currentHomeMeasures: HomeMeasuresLastAggregatedModel[] = []
     const homeMeasures: HomeMeasureModel[][] = []
     const placeNamesChanged = new Set<string>();
     const chartsAndCurrentMeasures = {
@@ -68,9 +69,9 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
 
     result.forEach((measure) => {
       homeMeasures.push(measure.measures);
-      const lastMeasure = measure.measures.at(-1);
-      if (lastMeasure) {
-        currentHomeMeasures.push(lastMeasure);
+
+      if (this.enrichLastMeasureByAggregations(measure)) {
+        currentHomeMeasures.push(this.enrichLastMeasureByAggregations(measure));
       }
 
     })
@@ -86,7 +87,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       return this.labelsService.handleLabelsValuesSeparation(result);
     });
     chartsAndCurrentMeasures.currentHomeMeasures.filter(result => result !== null).forEach(result => {
-      this.currentHomeMeasuresCharts.set(result.placeName, result);
+      this.measuresLastAggregated.set(result.placeName, result);
     });
     this.homeMeasuresService.setSpinner(false);
   }
@@ -104,6 +105,20 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     this.intervalId = window.setInterval(() => {
       this.getMeasuresForAllPlaces();
     }, 60000);
+  }
+
+  private enrichLastMeasureByAggregations(measure: HomeMeasuresAllPlacesModel):HomeMeasuresLastAggregatedModel  {
+    let lastMeasure = measure.measures.at(-1);
+    let enrichedLastMeasure: Record<string, any> = {}
+    if (lastMeasure) {
+      for (const [key, value] of Object.entries(measure)) {
+        if (value !== null && value !== undefined && key !== 'measures') {
+          enrichedLastMeasure[key] = value;
+        }
+      }
+    }
+    enrichedLastMeasure = {...lastMeasure, ...enrichedLastMeasure};
+    return enrichedLastMeasure as HomeMeasuresLastAggregatedModel;
   }
 
 

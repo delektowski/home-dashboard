@@ -4,6 +4,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {DarkModeService} from '../../services/dark-mode.service';
 import {ChartColorsEnum} from '../../models/chart-colors.enum';
 import {PanelCardComponent} from '../panel-card/panel-card.component';
+import {HomeMeasuresLastAggregatedModel} from '../../models/home-measures-last-aggregated.model';
 
 @Component({
   selector: 'app-line-chart',
@@ -21,10 +22,8 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input() axisY: unknown[] | undefined = [];
   @Input() chartLineColor: ChartColorsEnum = ChartColorsEnum.RED;
   @Input() placeName: string | undefined;
-  @Input() currentTemperature: number | undefined;
-  @Input() currentHumidity: number | undefined;
-  @Input() createdAt: string | undefined;
   @Input() placeNameChanged = new Set<string>();
+  @Input() measuresLastAggregated?: HomeMeasuresLastAggregatedModel;
 
   constructor(private cd: ChangeDetectorRef) {
   }

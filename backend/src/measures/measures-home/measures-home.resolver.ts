@@ -14,8 +14,6 @@ export class MeasuresHomeResolver {
     nullable: true,
   })
   async getMeasuresForAllPlaces() {
-
-
     return await this.measuresHomeService.getMeasuresForAllPlaces();
   }
 

@@ -21,10 +21,10 @@ export class MeasuresHomeService {
 
   async getMeasuresForAllPlaces(): Promise<MeasuresHomeModel[]> {
     const twoDaysAgo = new Date();
+    const now = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
     twoDaysAgo.setHours(0, 0, 0, 0);
 
-    const now = new Date();
 
     return await this.measuresHomeModel.aggregate([
       {

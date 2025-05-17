@@ -4,6 +4,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {PanelCardComponent} from '../panel-card/panel-card.component';
 import {DarkModeService} from '../../services/dark-mode.service';
 import {ChartColorsEnum} from '../../models/chart-colors.enum';
+import {HomeMeasuresLastAggregatedModel} from '../../models/home-measures-last-aggregated.model';
 
 @Component({
   selector: 'app-multi-line-chart',
@@ -28,11 +29,8 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   @Input() axisYBis: unknown[] | undefined = [];
   @Input() chartLineColorY: ChartColorsEnum = ChartColorsEnum.RED;
   @Input() chartLineColorY1: ChartColorsEnum = ChartColorsEnum.BLUE;
-  @Input() placeName: string | undefined;
-  @Input() currentTemperature: number | undefined;
-  @Input() currentHumidity: number | undefined;
-  @Input() createdAt: string | undefined;
   @Input() placeNameChanged = new Set<string>();
+  @Input() measuresLastAggregated?: HomeMeasuresLastAggregatedModel
 
   constructor(private cd: ChangeDetectorRef) {}
 
@@ -43,9 +41,9 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.placeName && this.placeNameChanged.has(this.placeName)) {
+    if (this.measuresLastAggregated?.placeName && this.placeNameChanged.has(this.measuresLastAggregated?.placeName)) {
       this.initChart();
-      this.placeNameChanged.delete(this.placeName);
+      this.placeNameChanged.delete(this.measuresLastAggregated?.placeName);
     }
   }
 
