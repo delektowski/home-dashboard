@@ -49,8 +49,8 @@ export class MeasuresHomeService {
             $push: {
               _id: "$_id",
               placeName: "$placeName",
-              temperature: "$temperature",
-              humidity: "$humidity",
+              temperature: { $round: ["$temperature", 0] },
+              humidity: { $round: ["$humidity", 0] },
               createdAt: "$createdAt"
             }
           }
@@ -58,7 +58,11 @@ export class MeasuresHomeService {
       },
       {
         $addFields: {
+          maxTemperature: { $round: ["$maxTemperature", 0] },
+          minTemperature: { $round: ["$minTemperature", 0] },
           avgTemperature: { $round: ["$avgTemperature", 0] },
+          maxHumidity: { $round: ["$maxHumidity", 0] },
+          minHumidity: { $round: ["$minHumidity", 0] },
           avgHumidity: { $round: ["$avgHumidity", 0] }
         }
       }
