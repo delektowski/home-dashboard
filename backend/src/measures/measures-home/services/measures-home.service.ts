@@ -22,7 +22,7 @@ export class MeasuresHomeService {
   async getMeasuresForAllPlaces(): Promise<MeasuresHomeModel[]> {
     const twoDaysAgo = new Date();
     const now = new Date();
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
     twoDaysAgo.setHours(0, 0, 0, 0);
 
 
