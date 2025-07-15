@@ -1,5 +1,5 @@
 import {Component, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
-import {forkJoin, fromEvent, map, Observable, switchMap, take, tap} from 'rxjs';
+import {fromEvent, map, take} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {HomeMeasuresService} from '../services/home-measures.service';
 import {ChartModule} from 'primeng/chart';
@@ -10,6 +10,7 @@ import {LabelsService} from '../services/labels.service';
 import {MultiLineChartComponent} from './multi-line-chart/multi-line-chart.component';
 import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.model';
 import {HomeMeasuresLastAggregatedModel} from '../models/home-measures-last-aggregated.model';
+import {ChartsAndCurrentMeasuresModel} from '../models/charts-and-current-measures.model';
 
 
 @Component({
@@ -23,11 +24,12 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private homeMeasuresService = inject(HomeMeasuresService);
   private labelsService = inject(LabelsService);
+  protected visible: string = '';
 
   homeMeasuresCharts: HomeMeasureChartModel[] = [];
   measuresLastAggregated = new Map<string, HomeMeasuresLastAggregatedModel>();
   placeNameChanged = new Set<string>();
-  protected visible: string = '';
+
   ngOnInit(): void {
     this.handleVisibilityChange();
     this.refreshOnTimeInterval();
@@ -45,10 +47,8 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     this.homeMeasuresService.setSpinner(true);
     this.homeMeasuresService.getMeasuresForAllPlaces().pipe(take(1), map((result) => result.data.getMeasuresForAllPlaces)).subscribe({
       next: (result) => {
-        this.setChartsAndCurrentHomeMeasures(result);
-
+        this.handleChartsAndCurrentHomeMeasures(result);
       },
-
       error: (error) => {
         console.error('getMeasuresForAllPlaces error:', error);
         this.homeMeasuresService.setSpinner(false);
@@ -59,24 +59,31 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     });
   }
 
-  setChartsAndCurrentHomeMeasures(result: HomeMeasuresAllPlacesModel[]) {
-    const currentHomeMeasures: HomeMeasuresLastAggregatedModel[] = []
+  handleChartsAndCurrentHomeMeasures(result: HomeMeasuresAllPlacesModel[]) {
+    const {homeMeasures, currentHomeMeasures} = this.getChartsAndCurrentMeasures(result);
+    this.setHomeMeasuresCharts(homeMeasures)
+    this.setCurrentHomeMeasures(currentHomeMeasures)
+  }
+
+  getChartsAndCurrentMeasures(result: HomeMeasuresAllPlacesModel[]): ChartsAndCurrentMeasuresModel {
     const homeMeasures: HomeMeasureModel[][] = []
-    const placeNamesChanged = new Set<string>();
+    const currentHomeMeasures: HomeMeasuresLastAggregatedModel[] = []
     const chartsAndCurrentMeasures = {
       homeMeasures, currentHomeMeasures
     }
 
     result.forEach((measure) => {
       homeMeasures.push(measure.measures);
-
-      if (this.enrichLastMeasureByAggregations(measure)) {
-        currentHomeMeasures.push(this.enrichLastMeasureByAggregations(measure));
-      }
-
+      currentHomeMeasures.push(this.enrichLastMeasureByAggregations(measure));
     })
 
-    this.homeMeasuresCharts = chartsAndCurrentMeasures.homeMeasures.sort((a, b) => {
+    return chartsAndCurrentMeasures
+  }
+
+  setHomeMeasuresCharts(homeMeasures: HomeMeasureModel[][]): void {
+    const placeNamesChanged = new Set<string>();
+
+    this.homeMeasuresCharts = homeMeasures.sort((a, b) => {
       return (a[0]['placeName'] || '').localeCompare(b[0]['placeName'] || '');
     }).map(result => {
       const placeName = result[0]['placeName'];
@@ -86,10 +93,12 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       }
       return this.labelsService.handleLabelsValuesSeparation(result);
     });
-    chartsAndCurrentMeasures.currentHomeMeasures.filter(result => result !== null).forEach(result => {
+  }
+
+  setCurrentHomeMeasures(currentHomeMeasures: HomeMeasuresLastAggregatedModel[]): void {
+    currentHomeMeasures.filter(result => result !== null).forEach(result => {
       this.measuresLastAggregated.set(result.placeName, result);
     });
-    this.homeMeasuresService.setSpinner(false);
   }
 
   handleVisibilityChange(): void {
@@ -107,7 +116,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     }, 60000);
   }
 
-  private enrichLastMeasureByAggregations(measure: HomeMeasuresAllPlacesModel):HomeMeasuresLastAggregatedModel  {
+  private enrichLastMeasureByAggregations(measure: HomeMeasuresAllPlacesModel): HomeMeasuresLastAggregatedModel {
     let lastMeasure = measure.measures.at(-1);
     let enrichedLastMeasure: Record<string, any> = {}
     if (lastMeasure) {
@@ -120,6 +129,4 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     enrichedLastMeasure = {...lastMeasure, ...enrichedLastMeasure};
     return enrichedLastMeasure as HomeMeasuresLastAggregatedModel;
   }
-
-
 }
