@@ -12,19 +12,18 @@ import {DarkModeService} from '../services/dark-mode.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class MenuBarComponent implements OnInit {
-  items: MenuItem[] | undefined;
+  items: MenuItem[] = [{
+    label: 'Measures',
+    icon: PrimeIcons.GAUGE,
+    iconStyle: {color: 'green', fontSize: '20px'},
+    routerLink: 'measures',
+  }];
   isDarkMode = false;
   private darkModeService = inject(DarkModeService);
 
 
   ngOnInit() {
     this.toggleDarkMode();
-    this.items = [{
-      label: 'Measures',
-      icon: PrimeIcons.GAUGE,
-      iconStyle: {color: 'green', fontSize: '20px'},
-      routerLink: 'measures',
-    }];
   }
 
   toggleDarkMode() {
