@@ -31,9 +31,6 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   protected homeMeasuresService = inject(HomeMeasuresService);
   @Input() measuresLastAggregated?: HomeMeasuresLastAggregatedModel;
 
-
-  protected severityValueTemperature: WritableSignal<Severity> = signal<Severity>("secondary");
-
   protected defaultSeverity: WritableSignal<Severity> = signal<Severity>("secondary");
 
   protected severityConfig = new Map<string, WritableSignal<Severity>>();
@@ -81,7 +78,7 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
       for (let [measuresLastAggregatedKey, measuresLastAggregatedValue] of Object.entries(this.measuresLastAggregated)) {
         const isMeasure = !this.notMeasureKeys.has(measuresLastAggregatedKey)
 
-        if (measuresLastAggregatedValue && isMeasure) {
+        if (typeof measuresLastAggregatedValue === 'number' && isMeasure) {
 
           if (this.temperatureKeys.has(measuresLastAggregatedKey)) {
             this.severityConfig.set(measuresLastAggregatedKey, this.setTemperatureSeverityColor(measuresLastAggregatedValue))
@@ -97,7 +94,7 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
 
   setTemperatureSeverityColor(temperature: number | undefined): WritableSignal<Severity> {
     const severityValue = signal<Severity>("secondary")
-    if (temperature) {
+    if (typeof temperature === "number") {
 
       if (
         temperature < 12) {

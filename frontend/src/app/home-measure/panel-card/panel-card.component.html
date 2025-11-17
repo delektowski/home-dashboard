@@ -10,10 +10,10 @@
       </span>
       <div class="container__badges">
         @for (key of measuresLastAggregatedKeys ; track key) {
-          @if (measuresLastAggregated ? measuresLastAggregated[key] || '' : '') {
+          @if (measuresLastAggregated && typeof measuresLastAggregated[key] === 'number') {
             <ng-container *ngTemplateOutlet="badgeTemplate, context:{
-             value: measuresLastAggregated ? measuresLastAggregated[key] || '' : '', createdAt: key === 'temperature' ? measuresLastAggregated?.createdAt : undefined, measureType: key
-          } "/>
+   value: measuresLastAggregated[key], createdAt: key === 'temperature' ? measuresLastAggregated?.createdAt : undefined, measureType: key
+} "/>
           }
         }
       </div>
