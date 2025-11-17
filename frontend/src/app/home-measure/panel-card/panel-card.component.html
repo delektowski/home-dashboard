@@ -27,7 +27,7 @@
 <ng-template #badgeTemplate let-value="value"let-createdAt="createdAt"
              let-measureType="measureType">
   <div class="container__badge badge-temperature"
-       [ngClass]="{'badge-temperature':temperatureKeys.has(measureType), 'badge-humidity': !temperatureKeys.has(measureType)}"
+       [ngClass]="{'badge-temperature':temperatureKeys.has(measureType), 'badge-humidity': !temperatureKeys.has(measureType), 'no-humidity': !hasHumidity && !temperatureKeys.has(measureType)}"
        title="measureType">
     <p-badge styleClass="badge-width" value="{{value}} {{temperatureKeys.has(measureType) ? '&deg;C' : '%'}} " badgeSize="xlarge"
              [severity]="severityConfig.get(measureType)?.() || defaultSeverity()"/>

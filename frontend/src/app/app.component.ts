@@ -1,12 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {MenuBarComponent} from './menu-bar/menu-bar.component';
 import {DarkModeService} from './services/dark-mode.service';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MenuBarComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 

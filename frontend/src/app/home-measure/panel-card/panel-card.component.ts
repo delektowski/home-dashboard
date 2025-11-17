@@ -42,6 +42,8 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   notMeasureKeys = new Set(['placeName', 'createdAt', '__typename']);
   temperatureKeys = new Set(["temperature", "maxTemperature", "minTemperature", "avgTemperature"]);
 
+  hasHumidity = true;
+
   ngOnInit() {
     this.setMeasuresLastAggregatedKeys();
     this.setSeverityConfig();
@@ -82,8 +84,10 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
 
           if (this.temperatureKeys.has(measuresLastAggregatedKey)) {
             this.severityConfig.set(measuresLastAggregatedKey, this.setTemperatureSeverityColor(measuresLastAggregatedValue))
-          } else {
+          } else if(measuresLastAggregatedValue !== 0){
             this.severityConfig.set(measuresLastAggregatedKey, this.setHumiditySeverityColor(measuresLastAggregatedValue))
+          } else if (measuresLastAggregatedValue === 0) {
+            this.hasHumidity = false;
           }
         }
       }
