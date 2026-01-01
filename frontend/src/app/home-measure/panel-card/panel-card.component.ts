@@ -114,7 +114,11 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
     if (typeof temperature === "number") {
 
       if (
-        temperature < 12) {
+        temperature < 0) {
+        severityValue.set("secondary");
+      }
+      if (
+        temperature < 12 && temperature >= 0) {
         severityValue.set("contrast");
       }
       if (temperature >= 12 && temperature < 20) {
