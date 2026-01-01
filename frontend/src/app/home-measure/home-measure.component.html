@@ -1,18 +1,24 @@
 @for (homeMeasuresChart of homeMeasuresCharts; let idx = $index; track idx; ) {
-  @if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values && homeMeasuresChart?.placeName) {
-    @if (homeMeasuresChart?.values && (homeMeasuresChart?.humidityValues?.length || 0) > 0) {
-      <app-multi-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
-                            [axisYBis]="homeMeasuresChart.humidityValues"
-                            [placeNameChanged]="placeNameChanged" [measuresLastAggregated]="measuresLastAggregated.get(homeMeasuresChart.placeName) || undefined"></app-multi-line-chart>
-    } @else {
-      <app-line-chart [axisX]="homeMeasuresChart.labels" [axisY]="homeMeasuresChart.values"
-                      [placeName]="homeMeasuresChart?.placeName"
-
-                      [placeNameChanged]="placeNameChanged"
-                      [measuresLastAggregated]="measuresLastAggregated.get(homeMeasuresChart.placeName)"
-
-      ></app-line-chart>
-    }
-  }
-}
-
+@if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values
+&& homeMeasuresChart?.placeName) { @if (homeMeasuresChart?.values &&
+(homeMeasuresChart?.humidityValues?.length || 0) > 0) {
+<app-multi-line-chart
+  [axisX]="homeMeasuresChart.labels"
+  [axisY]="homeMeasuresChart.values"
+  [axisYBis]="homeMeasuresChart.humidityValues"
+  [placeNameChanged]="placeNameChanged"
+  [measuresLastAggregated]="
+    measuresLastAggregated.get(homeMeasuresChart.placeName) || undefined
+  "
+></app-multi-line-chart>
+} @else {
+<app-line-chart
+  [axisX]="homeMeasuresChart.labels"
+  [axisY]="homeMeasuresChart.values"
+  [placeName]="homeMeasuresChart?.placeName"
+  [placeNameChanged]="placeNameChanged"
+  [measuresLastAggregated]="
+    measuresLastAggregated.get(homeMeasuresChart.placeName)
+  "
+></app-line-chart>
+} } }

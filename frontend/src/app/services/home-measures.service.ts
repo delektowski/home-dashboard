@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {Apollo, gql} from 'apollo-angular';
 import {Observable} from 'rxjs';
 import {ApolloQueryResult} from '@apollo/client';
@@ -32,6 +32,9 @@ export class HomeMeasuresService {
   private apollo = inject(Apollo);
 
   isSpinner = false
+
+  isAllCollapsed = signal(true);
+  anyIsCollapsed: boolean | null = null;
 
 
   getMeasuresForAllPlaces(): Observable<ApolloQueryResult<{

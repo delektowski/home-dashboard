@@ -2,3 +2,9 @@
   width: 100%;
   padding-block: 6rem;
 }
+
+p-button {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}

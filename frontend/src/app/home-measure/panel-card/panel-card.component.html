@@ -1,5 +1,5 @@
 <div class="card" [ngClass]="{'hide-uninitialized': !isInitialized}">
-  <p-panel [toggleable]="true" [collapsed]="true" (onBeforeToggle)="onCollapsedChange($event)">
+  <p-panel  [toggleable]="true" [(collapsed)]="allCollapsed" (onAfterToggle)="onCollapsedChange($event)">
     <ng-template #header>
       <span class="header-place-name">{{ measuresLastAggregated?.placeName || '' }}</span>
       <span [class]="'container__spinner'">

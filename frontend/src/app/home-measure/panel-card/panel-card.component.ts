@@ -1,6 +1,6 @@
 import {
-  AfterViewInit,
-  Component,
+  AfterViewInit, ChangeDetectorRef,
+  Component, effect,
   inject,
   Input,
   OnChanges,
@@ -29,6 +29,7 @@ import {OverlayBadgeModule} from 'primeng/overlaybadge';
 })
 export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   protected homeMeasuresService = inject(HomeMeasuresService);
+  protected cdr = inject(ChangeDetectorRef);
   @Input() measuresLastAggregated?: HomeMeasuresLastAggregatedModel;
 
   protected defaultSeverity: WritableSignal<Severity> = signal<Severity>("secondary");
@@ -43,6 +44,18 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   temperatureKeys = new Set(["temperature", "maxTemperature", "minTemperature", "avgTemperature"]);
 
   hasHumidity = true;
+
+  allCollapsed = true;
+
+  constructor() {
+    effect(() => {
+      this.homeMeasuresService.isAllCollapsed();
+      if(this.homeMeasuresService.anyIsCollapsed !== null) {
+
+      this.allCollapsed = !this.homeMeasuresService.anyIsCollapsed;
+      }
+    });
+  }
 
   ngOnInit() {
     this.setMeasuresLastAggregatedKeys();
@@ -142,5 +155,6 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
 
   onCollapsedChange($event: any) {
     console.log("$event", $event)
+    this.homeMeasuresService.anyIsCollapsed = $event.collapsed;
   }
 }
