@@ -62,6 +62,3 @@ export class AppComponent implements OnInit {
     this.homeMeasuresService.isAllCollapsed.set(!this.homeMeasuresService.isAllCollapsed());
   }
 }
-
-
-
