@@ -32,7 +32,7 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   protected cdr = inject(ChangeDetectorRef);
   @Input() measuresLastAggregated?: HomeMeasuresLastAggregatedModel;
 
-  protected defaultSeverity: WritableSignal<Severity> = signal<Severity>("secondary");
+  protected defaultSeverity: WritableSignal<Severity> = signal<Severity>("contrast");
 
   protected severityConfig = new Map<string, WritableSignal<Severity>>();
 
@@ -110,7 +110,7 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
 
 
   setTemperatureSeverityColor(temperature: number | undefined): WritableSignal<Severity> {
-    const severityValue = signal<Severity>("secondary")
+    const severityValue = signal<Severity>("contrast")
     if (typeof temperature === "number") {
 
       if (
