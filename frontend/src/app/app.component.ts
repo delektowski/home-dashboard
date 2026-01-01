@@ -1,9 +1,11 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {DarkModeService} from './services/dark-mode.service';
-import {HomeMeasuresService} from './services/home-measures.service';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { DarkModeService } from './services/dark-mode.service';
+import { HomeMeasuresService } from './services/home-measures.service';
 import { GlobalToggleBtnComponent } from "./global-toggle-btn/global-toggle-btn.component";
 import { SwUpdate } from '@angular/service-worker';
+import { fromEvent, map } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
 @Component({
@@ -17,12 +19,14 @@ import { SwUpdate } from '@angular/service-worker';
 export class AppComponent implements OnInit {
 
   private darkModeService = inject(DarkModeService);
-  protected homeMeasuresService = inject(HomeMeasuresService);
   private swUpdate = inject(SwUpdate);
+  private destroyRef = inject(DestroyRef);
+  protected homeMeasuresService = inject(HomeMeasuresService);
 
   ngOnInit() {
     this.toggleDarkMode();
     this.checkForUpdates();
+    this.checkForUpdateOnVisibilityChange();
   }
 
   checkForUpdates() {
@@ -30,10 +34,20 @@ export class AppComponent implements OnInit {
       // Check for updates when app starts
       this.swUpdate.versionUpdates.subscribe(event => {
         if (event.type === 'VERSION_READY') {
-            window.location.reload();
+          window.location.reload();
         }
       });
+    }
+  }
 
+  checkForUpdateOnVisibilityChange(): void {
+    if (this.swUpdate.isEnabled) {
+      fromEvent(document, 'visibilitychange').pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map(() => undefined)
+      ).subscribe(() => {
+        this.swUpdate.checkForUpdate();
+      });
     }
   }
 
