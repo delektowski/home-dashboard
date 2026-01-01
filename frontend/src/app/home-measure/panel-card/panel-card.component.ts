@@ -154,7 +154,6 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   onCollapsedChange($event: any) {
-    console.log("$event", $event)
     this.homeMeasuresService.anyIsCollapsed = $event.collapsed;
   }
 }
