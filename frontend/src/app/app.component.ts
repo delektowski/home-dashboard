@@ -4,7 +4,7 @@ import { DarkModeService } from './services/dark-mode.service';
 import { HomeMeasuresService } from './services/home-measures.service';
 import { GlobalToggleBtnComponent } from "./global-toggle-btn/global-toggle-btn.component";
 import { SwUpdate } from '@angular/service-worker';
-import { fromEvent, map } from 'rxjs';
+import { fromEvent, map, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
   checkForUpdates() {
     if (this.swUpdate.isEnabled) {
       // Check for updates when app starts
-      this.swUpdate.versionUpdates.subscribe(event => {
+      this.swUpdate.versionUpdates.pipe(take(1)).subscribe(event => {
         if (event.type === 'VERSION_READY') {
           window.location.reload();
         }
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         map(() => undefined)
       ).subscribe(() => {
-        this.swUpdate.checkForUpdate();
+        this.checkForUpdates();
       });
     }
   }
