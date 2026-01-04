@@ -31,7 +31,7 @@
        title="measureType">
     <p-badge styleClass="badge-width" value="{{value}} {{temperatureKeys.has(measureType) ? '&deg;C' : '%'}} " badgeSize="xlarge"
              [severity]="severityConfig.get(measureType)?.() || defaultSeverity()"/>
-    <ng-container *ngTemplateOutlet="badgeIcon" />
+    <ng-container *ngTemplateOutlet="badgeIcon; context:{isBelowZero: value < 0}" />
 
 
   </div>
@@ -39,35 +39,35 @@
     <p class="created-at">{{ createdAt | date:'H:mm' }}</p>
   }
 
-  <ng-template #badgeIcon>
+  <ng-template #badgeIcon let-isBelowZero="isBelowZero">
 
     @switch (measureType) {
       @case ('temperature') {
-        <i class="pi pi-sun" style="font-size: .5rem"></i>
+        <i class="pi pi-sun badge-font-size" style="font-size: .5rem;" [ngClass]="{'badge-color-white': isBelowZero}"></i>
       }
       @case ('maxTemperature') {
-        <i class="pi pi-arrow-up" style="font-size: .5rem"></i>
+        <i class="pi pi-arrow-up badge-font-size"[ngClass]="{'badge-color-white': isBelowZero}"></i>
       }
       @case ('minTemperature') {
-        <i class="pi pi-arrow-down" style="font-size: .5rem"></i>
+        <i class="pi pi-arrow-down badge-font-size"[ngClass]="{'badge-color-white': isBelowZero}"></i>
       }
       @case ('avgTemperature') {
-        <i class="pi pi-chart-line" style="font-size: .5rem"></i>
+        <i class="pi pi-chart-line badge-font-size"[ngClass]="{'badge-color-white': isBelowZero}"></i>
       }
       @case ('humidity') {
-        <i class="pi pi-percentage" style="font-size: .5rem"></i>
+        <i class="pi pi-percentage badge-font-size"></i>
       }
       @case ('maxHumidity') {
-        <i class="pi pi-arrow-up" style="font-size: .5rem"></i>
+        <i class="pi pi-arrow-up badge-font-size"></i>
       }
       @case ('minHumidity') {
-        <i class="pi pi-arrow-down" style="font-size: .5rem"></i>
+        <i class="pi pi-arrow-down badge-font-size"></i>
       }
       @case ('avgHumidity') {
-        <i class="pi pi-chart-line" style="font-size: .5rem"></i>
+        <i class="pi pi-chart-line badge-font-size"></i>
       }
       @default {
-        <i class="pi pi-check" style="font-size: .5rem"></i>
+        <i class="pi pi-check badge-font-size"></i>
       }
     }
   </ng-template>

@@ -15,7 +15,7 @@ import {ButtonModule} from 'primeng/button';
 import {MenuModule} from 'primeng/menu';
 import {Badge} from 'primeng/badge';
 import {Severity} from '../../models/severity';
-import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
+import { DatePipe, NgClass, NgTemplateOutlet, NgStyle } from '@angular/common';
 import {HomeMeasuresService} from '../../services/home-measures.service';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {HomeMeasuresLastAggregatedModel} from '../../models/home-measures-last-aggregated.model';
@@ -23,7 +23,7 @@ import {OverlayBadgeModule} from 'primeng/overlaybadge';
 
 @Component({
   selector: 'app-panel-card',
-  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe, NgClass, ProgressSpinner, NgTemplateOutlet,OverlayBadgeModule],
+  imports: [PanelModule, AvatarModule, ButtonModule, MenuModule, Badge, DatePipe, NgClass, ProgressSpinner, NgTemplateOutlet, OverlayBadgeModule],
   templateUrl: './panel-card.component.html',
   styleUrl: './panel-card.component.scss',
 })
