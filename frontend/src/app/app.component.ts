@@ -4,7 +4,7 @@ import { DarkModeService } from './services/dark-mode.service';
 import { HomeMeasuresService } from './services/home-measures.service';
 import { GlobalToggleBtnComponent } from "./global-toggle-btn/global-toggle-btn.component";
 import { SwUpdate } from '@angular/service-worker';
-import { fromEvent, map, take } from 'rxjs';
+import { fromEvent, map, take, filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
@@ -43,16 +43,23 @@ export class AppComponent implements OnInit {
   checkForUpdateOnVisibilityChange(): void {
       fromEvent(document, 'visibilitychange').pipe(
         takeUntilDestroyed(this.destroyRef),
-        map(() => undefined)
+        filter(() => !document.hidden) // Only check when becoming visible
       ).subscribe(() => {
         this.swUpdate.checkForUpdate()
-          .then((isUpdate) => {
-            console.log("isUpdate ready: ", isUpdate)
-            if (isUpdate) {
-              this.swUpdate.activateUpdate().then(() => document.location.reload());
-            }
+          .then((updateFound) => {
+            console.log("Update found: ", updateFound);
           })
           .catch(err => console.error('Update check failed:', err));
+      });
+      
+      // Listen for available updates
+      this.swUpdate.versionUpdates.pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(event => {
+        if (event.type === 'VERSION_READY') {
+          console.log('New version ready, reloading...');
+          this.swUpdate.activateUpdate().then(() => document.location.reload());
+        }
       });
   }
 
