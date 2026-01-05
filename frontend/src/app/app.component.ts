@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(event => {
         if (event.type === 'VERSION_READY') {
-          console.log('New version ready, reloading...');
+          console.log('New version ready, reloading the app...');
           this.swUpdate.activateUpdate().then(() => document.location.reload());
         }
       });
