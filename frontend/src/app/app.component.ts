@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
       ).subscribe(() => {
         this.swUpdate.checkForUpdate()
           .then((isUpdate) => {
-            console.log("isUpdate: ", isUpdate)
+            console.log("isUpdate ready: ", isUpdate)
             if (isUpdate) {
               this.swUpdate.activateUpdate().then(() => document.location.reload());
             }
