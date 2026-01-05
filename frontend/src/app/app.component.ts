@@ -41,14 +41,19 @@ export class AppComponent implements OnInit {
   }
 
   checkForUpdateOnVisibilityChange(): void {
-    if (this.swUpdate.isEnabled) {
       fromEvent(document, 'visibilitychange').pipe(
         takeUntilDestroyed(this.destroyRef),
         map(() => undefined)
       ).subscribe(() => {
-        this.checkForUpdates();
+        this.swUpdate.checkForUpdate()
+          .then((isUpdate) => {
+            console.log("isUpdate: ", isUpdate)
+            if (isUpdate) {
+              this.swUpdate.activateUpdate().then(() => document.location.reload());
+            }
+          })
+          .catch(err => console.error('Update check failed:', err));
       });
-    }
   }
 
   toggleDarkMode() {
