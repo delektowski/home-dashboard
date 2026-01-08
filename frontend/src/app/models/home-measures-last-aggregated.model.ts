@@ -8,6 +8,7 @@ export interface HomeMeasuresLastAggregatedModel extends HomeMeasureModel{
   maxHumidity?: number;
   minHumidity?: number;
   avgHumidity?: number;
+  isTimeUpdated?: boolean;
 
 
 

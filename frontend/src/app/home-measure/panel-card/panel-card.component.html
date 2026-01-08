@@ -12,8 +12,7 @@
         @for (key of measuresLastAggregatedKeys ; track key) {
           @if (measuresLastAggregated && typeof measuresLastAggregated[key] === 'number') {
             <ng-container *ngTemplateOutlet="badgeTemplate, context:{
-   value: measuresLastAggregated[key], createdAt: key === 'temperature' ? measuresLastAggregated?.createdAt : undefined, measureType: key
-} "/>
+   value: measuresLastAggregated[key], createdAt: key === 'temperature' ? measuresLastAggregated?.createdAt : undefined, measureType: key, isTimeUpdated: measuresLastAggregated?.isTimeUpdated} "/>
           }
         }
       </div>
@@ -25,7 +24,7 @@
 
 <!--TEMPLATES-->
 <ng-template #badgeTemplate let-value="value"let-createdAt="createdAt"
-             let-measureType="measureType">
+             let-measureType="measureType" let-isTimeUpdated="isTimeUpdated">
   <div class="container__badge badge-temperature"
        [ngClass]="{'badge-temperature':temperatureKeys.has(measureType), 'badge-humidity': !temperatureKeys.has(measureType), 'no-humidity': !hasHumidity && !temperatureKeys.has(measureType)}"
        title="measureType">
@@ -36,7 +35,7 @@
 
   </div>
   @if (createdAt) {
-    <p class="created-at">{{ createdAt | date:'H:mm' }}</p>
+    <p class="created-at" [ngClass]="{'created-at--red': !isTimeUpdated}">{{ createdAt | date:'H:mm' }}</p>
   }
 
   <ng-template #badgeIcon let-isBelowZero="isBelowZero">

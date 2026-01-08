@@ -37,6 +37,10 @@
   margin-block-end: 0;
   font-style: italic;
   transform: translateX(-25%);
+
+  &--red {
+    color: red;
+  }
 }
 
 .container__badge {
