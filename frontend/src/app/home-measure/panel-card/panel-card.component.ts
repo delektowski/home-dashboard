@@ -191,7 +191,7 @@ export class PanelCardComponent implements OnInit, OnChanges, AfterViewInit {
       const now = new Date();
       const timeDiff = now.getTime() - createdAt.getTime();
       const minutesDiff = timeDiff / (1000 * 60);
-      const updatedPeriodMinutes = 8;
+      const updatedPeriodMinutes = 15;
 
       if (minutesDiff <= updatedPeriodMinutes) {
         this.measuresLastAggregated.isTimeUpdated = true;
