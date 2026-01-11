@@ -6,10 +6,16 @@
     bottom: 0;
     width: 100%;
     z-index: 1;
-    
 }
 
 p-button {
     transform: scale(2);
     margin-block-end: 2rem;
+}
+
+@media (max-width: 600px) {
+    :host {
+        justify-content: flex-end;
+        padding-inline-end: 20vw;
+    }
 }

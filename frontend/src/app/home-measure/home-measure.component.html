@@ -1,7 +1,10 @@
-@for (homeMeasuresChart of homeMeasuresCharts; let idx = $index; track idx; ) {
-@if (homeMeasuresChart && homeMeasuresChart?.labels && homeMeasuresChart?.values
-&& homeMeasuresChart?.placeName) { @if (homeMeasuresChart?.values &&
-(homeMeasuresChart?.humidityValues?.length || 0) > 0) {
+@if (homeMeasuresCharts.length === 0) {
+<app-no-measures />
+} @else { @for (homeMeasuresChart of homeMeasuresCharts; let idx = $index; track
+idx; ) { @if (homeMeasuresChart && homeMeasuresChart?.labels &&
+homeMeasuresChart?.values && homeMeasuresChart?.placeName) { @if
+(homeMeasuresChart?.values && (homeMeasuresChart?.humidityValues?.length || 0) >
+0) {
 <app-multi-line-chart
   [axisX]="homeMeasuresChart.labels"
   [axisY]="homeMeasuresChart.values"
@@ -22,3 +25,7 @@
   "
 ></app-line-chart>
 } } }
+
+<app-global-toggle-btn></app-global-toggle-btn>
+
+}

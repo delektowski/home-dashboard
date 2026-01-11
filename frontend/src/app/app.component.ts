@@ -2,7 +2,6 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DarkModeService } from './services/dark-mode.service';
 import { HomeMeasuresService } from './services/home-measures.service';
-import { GlobalToggleBtnComponent } from "./global-toggle-btn/global-toggle-btn.component";
 import { SwUpdate } from '@angular/service-worker';
 import { fromEvent, map, take, filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -10,7 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, GlobalToggleBtnComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 

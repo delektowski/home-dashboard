@@ -11,11 +11,13 @@ import {MultiLineChartComponent} from './multi-line-chart/multi-line-chart.compo
 import {HomeMeasuresAllPlacesModel} from '../models/home-measures-all-places.model';
 import {HomeMeasuresLastAggregatedModel} from '../models/home-measures-last-aggregated.model';
 import {ChartsAndCurrentMeasuresModel} from '../models/charts-and-current-measures.model';
+import { NoMeasuresComponent } from "./no-measures/no-measures.component";
+import { GlobalToggleBtnComponent } from "../global-toggle-btn/global-toggle-btn.component";
 
 
 @Component({
   selector: 'app-home-measure',
-  imports: [ChartModule, LineChartComponent, MultiLineChartComponent],
+  imports: [ChartModule, LineChartComponent, MultiLineChartComponent, NoMeasuresComponent, GlobalToggleBtnComponent],
   templateUrl: './home-measure.component.html',
   styleUrl: './home-measure.component.scss',
 })
@@ -47,6 +49,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     this.homeMeasuresService.setSpinner(true);
     this.homeMeasuresService.getMeasuresForAllPlaces().pipe(take(1), map((result) => result.data.getMeasuresForAllPlaces)).subscribe({
       next: (result) => {
+        console.log("result", result)
         this.handleChartsAndCurrentHomeMeasures(result);
       },
       error: (error) => {
@@ -106,7 +109,9 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
       map(() => undefined)
     ).subscribe(() => {
+      this.handleAllExpandedOnVisibilityChange();
       this.getMeasuresForAllPlaces();
+      
     });
   }
 
@@ -128,5 +133,15 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
     }
     enrichedLastMeasure = {...lastMeasure, ...enrichedLastMeasure};
     return enrichedLastMeasure as HomeMeasuresLastAggregatedModel;
+  }
+
+    toggleAllCollapsed() {
+    this.homeMeasuresService.isAllCollapsed.set(!this.homeMeasuresService.isAllCollapsed());
+  }
+
+  handleAllExpandedOnVisibilityChange() {
+    if (!this.homeMeasuresService.anyIsCollapsed){
+      this.toggleAllCollapsed() ;
+    }
   }
 }
