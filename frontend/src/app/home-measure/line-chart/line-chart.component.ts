@@ -58,7 +58,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       const maxValue = Math.max(...(this.axisY as number[] || []).filter(val => val !== null && val !== undefined));
 
       const range = maxValue - minValue;
-      const buffer = range * 0.2;
+      const buffer = range === 0 ? 1 : range * 0.2;
       this.data = {
         labels: this.axisX,
         datasets: [
