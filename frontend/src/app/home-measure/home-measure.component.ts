@@ -136,7 +136,7 @@ export class HomeMeasureComponent implements OnInit, OnDestroy {
   }
 
     toggleAllCollapsed() {
-    this.homeMeasuresService.isAllCollapsed.set(!this.homeMeasuresService.isAllCollapsed());
+    this.homeMeasuresService.isAllCollapsed.set(true);
   }
 
   handleAllExpandedOnVisibilityChange() {
