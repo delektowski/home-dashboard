@@ -9,7 +9,7 @@ import gc
 
 logger = Logger("send_temperature_logs.txt")
 
-def send_temperature(wdt, temperature: float, humidity = None):
+def send_temperature(wdt, temperature: float, humidity = None, place_name = None):
     wdt.feed()
     gc.collect()
     
@@ -24,7 +24,7 @@ def send_temperature(wdt, temperature: float, humidity = None):
         }
         """
     gql_variables = {
-        "measuresHomeData": {"placeName": PLACE_NAME, "temperature": temperature,"humidity": humidity } }
+        "measuresHomeData": {"placeName": place_name if place_name is not None else PLACE_NAME, "temperature": temperature,"humidity": humidity } }
     payload = {"query": gql_mutation, "variables": gql_variables}
     headers = {"Content-Type": "application/json"}
     payload_json = json.dumps(payload)
