@@ -1,8 +1,8 @@
-{$DOMAIN_NAME} {
+:80 {
     root * ./www
     encode gzip
 
-    # Handle all GraphQL requests - explicitly define methods
+    # Handle all GraphQL requests - explicitly defined
     handle /graphql* {
         reverse_proxy backend:3000
     }
@@ -12,6 +12,4 @@
         try_files {path} /index.html
         file_server
     }
-
-    tls {$EMAIL_ADDRESS}
 }
